@@ -106,8 +106,7 @@
         </service>
 
         <service android:name=".service.SinchService"/>
-=======
->>>>>>> 8e766fd421345a25f6ea4e1f1d73b281b5c00909
+
     </application>
 
 </manifest>

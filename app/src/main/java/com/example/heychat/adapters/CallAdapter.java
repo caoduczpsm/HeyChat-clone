@@ -2,6 +2,7 @@ package com.example.heychat.adapters;
 
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -16,55 +17,78 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.heychat.R;
 import com.example.heychat.listeners.CallListener;
-import com.example.heychat.listeners.UserListener;
-import com.example.heychat.models.User;
+import com.example.heychat.models.CallModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder> {
 
-    private final List<User> users;
-    private final UserListener userListener;
+    private final List<CallModel> calls;
     private final CallListener callListener;
 
-    public CallAdapter(List<User> users, UserListener userListener, CallListener callListener) {
-        this.users = users;
-        this.userListener = userListener;
+    public CallAdapter(ArrayList<CallModel> calls, CallListener callListener, Context context) {
+        this.calls = calls;
         this.callListener = callListener;
     }
-
-
 
     class CallViewHolder extends RecyclerView.ViewHolder{
         TextView username;
         CircleImageView image_user;
-        ImageView video_call_btn;
-        ImageView audio_call_btn;
-
+        ImageView image_type_call;
+        TextView time, typecall;
 
         public CallViewHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.user_name_call);
             image_user = itemView.findViewById(R.id.image_user);
-            video_call_btn = itemView.findViewById(R.id.video_call_btn);
-            audio_call_btn = itemView.findViewById(R.id.audio_call_btn);
+            image_type_call = itemView.findViewById(R.id.image_type_call);
+            time = itemView.findViewById(R.id.timeCall);
+            typecall = itemView.findViewById(R.id.typeCall);
         }
 
-        void setUserData(User user){
-            username.setText(user.name);
-            image_user.setImageBitmap(getUserImage(user.image));
-            video_call_btn.setOnClickListener(v -> callListener.initiateVideoCall(user));
+        void setUserData(CallModel call){
+            if (call.user != null){
+                username.setText(call.user.name);
+                image_user.setImageBitmap(getUserImage(call.user.image));
+                if (call.incoming){
+                    typecall.setText("Incoming call");
+                } else {
+                    typecall.setText("Outgoing call");
+                }
+            }
 
-            audio_call_btn.setOnClickListener(view -> callListener.initiateAudioCall(user));
+            if (call.type.equals("audio")){
+                image_type_call.setImageResource(R.drawable.ic_call);
+                image_type_call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        callListener.initiateAudioCall(call.user);
+                    }
+                });
+            } else {
+                image_type_call.setImageResource(R.drawable.ic_video_call);
+                image_type_call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        callListener.initiateVideoCall(call.user);
+                    }
+                });
+            }
+            time.setText(call.datetime);
+
         }
 
     }
 
     private Bitmap getUserImage(String encodedImage){
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
+        if (encodedImage != null){
+            byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
+        }
+        return null;
     }
 
     @NonNull
@@ -77,11 +101,11 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CallViewHolder holder, int position) {
-        holder.setUserData(users.get(position));
+        holder.setUserData(calls.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return calls.size();
     }
 }

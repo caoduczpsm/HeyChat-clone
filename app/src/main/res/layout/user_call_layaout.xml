@@ -9,36 +9,67 @@
         android:layout_height="@dimen/_40sdp"
         android:src="@drawable/profile"/>
 
-    <TextView
-        android:id="@+id/user_name_call"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="UserName"
-        android:layout_toEndOf="@id/image_user"
+    <RelativeLayout
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:textSize="@dimen/_10ssp"
-        android:textColor="@color/primary"
-        android:textStyle="bold"/>
+        android:layout_toEndOf="@id/image_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/user_name_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UserName"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:textSize="@dimen/_10ssp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/typeCall"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name_call"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="incoming"
+            android:textSize="@dimen/_8ssp"
+            android:textColor="@color/secondary_text"/>
+
+        <TextView
+            android:id="@+id/space"
+            android:layout_toEndOf="@id/typeCall"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name_call"
+            android:text=" - "
+            android:textSize="@dimen/_8ssp"
+            android:textColor="@color/secondary_text"/>
+
+        <TextView
+            android:id="@+id/timeCall"
+            android:layout_toEndOf="@id/space"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name_call"
+            android:text="time"
+            android:textSize="@dimen/_8ssp"
+            android:textColor="@color/secondary_text"/>
+
+    </RelativeLayout>
+
+
+
 
     <ImageView
-        android:id="@+id/audio_call_btn"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:src="@drawable/ic_call"
-        android:layout_toStartOf="@+id/video_call_btn"/>
-
-    <ImageView
-        android:id="@+id/video_call_btn"
+        android:id="@+id/image_type_call"
+        android:padding="@dimen/_8sdp"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:src="@drawable/ic_video_call"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/_10sdp" />
-
-
-
-
 
 
 </RelativeLayout>

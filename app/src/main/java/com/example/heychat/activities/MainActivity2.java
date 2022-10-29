@@ -60,7 +60,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity2 extends AppCompatActivity implements UserListener{
+public class MainActivity2 extends BaseSinchActivity implements UserListener, SinchService.StartFailedListener{
 
     private ActivityMain2Binding binding;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -232,9 +232,39 @@ public class MainActivity2 extends AppCompatActivity implements UserListener{
         bottomSheetDialog.show(this.getSupportFragmentManager(), bottomSheetDialog.getTag());
     }
 
+    @Override
+    protected void onServiceConnected() {
+        Log.d("serviceapp", "MainActivity  onServiceConnected");
+        if (!getSinchServiceInterface().isStarted()) {
+            getSinchServiceInterface().startClient(preferenceManager.getString(Constants.KEY_USER_ID));
+        }
+        getSinchServiceInterface().setStartListener(this);
+    }
 
+    @Override
+    public void onStartFailed(SinchError error) {
+        Log.d("serviceapp", "MainActivity  onStartFailed");
+        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+    }
 
+    @Override
+    public void onStarted() {
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if (getSinchServiceInterface() != null) {
+            getSinchServiceInterface().stopClient();
+        }
+        super.onDestroy();
+    }
 
 
 }

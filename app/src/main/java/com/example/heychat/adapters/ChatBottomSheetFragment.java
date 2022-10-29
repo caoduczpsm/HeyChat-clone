@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,7 +92,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatBottomSheetFragment extends BottomSheetDialogFragment implements MessageListener {
+public class ChatBottomSheetFragment extends BottomSheetDialogFragment implements MessageListener, CallListener {
 
     private AppCompatImageView imageBack;
     private RecyclerView chatRecyclerView;
@@ -176,6 +177,8 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
         layoutImage = view.findViewById(R.id.layoutImage);
         layoutAttact = view.findViewById(R.id.layoutAttact);
         textName.setText(receiverUser.name);
+        ImageView videoCall = view.findViewById(R.id.video_call_btn_chat_act);
+        ImageView audioCall = view.findViewById(R.id.audio_call_btn_chat_act);
 
         inputeMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -197,6 +200,9 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
 
             }
         });
+
+        videoCall.setOnClickListener(v->initiateVideoCall(receiverUser));
+        audioCall.setOnClickListener(v->initiateAudioCall(receiverUser));
     }
 
     private void setBtnVisible(boolean visible) {
@@ -387,31 +393,6 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
         layoutImage.setOnClickListener(v -> requestImagePermission());
         layoutAttact.setOnClickListener(v -> requestFilePermission());
 
-        CallListener callListener = new CallListener() {
-            @Override
-            public void initiateVideoCall(User user) {
-                if (user.token == null || user.token.trim().isEmpty()) {
-                    Toast.makeText(getContext(), user.name + "is not available for video call", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
-                    intent.putExtra("user", user);
-                    intent.putExtra("type", "video");
-                    startActivity(intent);
-                }
-            }
-
-            @Override
-            public void initiateAudioCall(User user) {
-                if (user.token == null || user.token.trim().isEmpty()) {
-                    Toast.makeText(getContext(), user.name + "is not available for audio call", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
-                    intent.putExtra("user", user);
-                    intent.putExtra("type", "audio");
-                    startActivity(intent);
-                }
-            }
-        };
     }
 
     private void requestFilePermission() {
@@ -752,5 +733,30 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
 
     }
 
+    @Override
+    public void initiateVideoCall(User user) {
+        if (user.token == null || user.token.trim().isEmpty()) {
+            Toast.makeText(getContext(), user.name + "is not available for video call", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
+            intent.putExtra("user", user);
+            intent.putExtra("type", "video");
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void initiateAudioCall(User user) {
+
+        if (user.token == null || user.token.trim().isEmpty()) {
+            Toast.makeText(getContext(), user.name + "is not available for audio call", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
+            intent.putExtra("user", user);
+            intent.putExtra("type", "audio");
+            startActivity(intent);
+
+        }
+    }
 
 }

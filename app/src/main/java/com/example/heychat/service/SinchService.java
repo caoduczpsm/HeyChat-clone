@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.heychat.activities.IncomingInvitationActivity;
 import com.sinch.android.rtc.AudioController;
@@ -17,6 +18,7 @@ import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
 import com.sinch.android.rtc.video.VideoController;
+import com.sinch.android.rtc.video.VideoScalingType;
 
 public class SinchService extends Service {
 
@@ -92,6 +94,10 @@ public class SinchService extends Service {
             return mSinchClient.getCallClient().callUserVideo(userId);
         }
 
+        public Call callUserAudio(String userId){
+            return mSinchClient.getCallClient().callUser(userId);
+        }
+
         public String getUserName() {
             return mUserId;
         }
@@ -101,11 +107,12 @@ public class SinchService extends Service {
         }
 
         public void startClient(String userName) {
+            Log.d("serviceapp", "BaseSinchActivity startClient"+ userName);
             start(userName);
         }
 
         public void stopClient() {
-            Log.d("stopClient", getUserName());
+            Toast.makeText(getApplicationContext(), "stopClient "+getUserName(), Toast.LENGTH_SHORT).show();
             stop();
         }
 
@@ -121,7 +128,9 @@ public class SinchService extends Service {
             if (!isStarted()) {
                 return null;
             }
-            return mSinchClient.getVideoController();
+            VideoController mSinchClientVideo = mSinchClient.getVideoController();
+            mSinchClientVideo.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+            return mSinchClientVideo;
         }
 
         public AudioController getAudioController() {

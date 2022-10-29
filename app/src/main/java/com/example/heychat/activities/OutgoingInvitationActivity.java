@@ -42,11 +42,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OutgoingInvitationActivity extends BaseSinchActivity implements SinchService.StartFailedListener {
+public class OutgoingInvitationActivity extends BaseSinchActivity {
 
     private PreferenceManager preferenceManager;
     private String inviterToken = null;
-    private String meetingRoom = null;
     private String meetingType = null;
     private int currentProgress = 0;
     private ProgressBar progressBar;
@@ -82,7 +81,6 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
         TextView textEmail = findViewById(R.id.outgoingtextEmail);
         progressBar = findViewById(R.id.call_duration);
 
-
         receiver = (User) getIntent().getSerializableExtra("user");
         if (receiver != null) {
             textFirstChar.setImageBitmap(getUserImage(receiver.image));
@@ -101,12 +99,14 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
         countDownTimer = new CountDownTimer(30 * 1000, 50) {
             @Override
             public void onTick(long l) {
-                currentProgress += 200;
-                progressBar.setProgress(currentProgress);
                 progressBar.setMax(30000 * 4);
-                if (currentProgress == progressBar.getMax()){
+                currentProgress += 200;
+                if (currentProgress >= progressBar.getMax()) {
                     cancelInvitation(receiver.token);
                 }
+
+                progressBar.setProgress(currentProgress);
+
             }
 
             @Override
@@ -133,9 +133,8 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
             data.put(Constants.KEY_EMAIL, preferenceManager.getString(Constants.KEY_EMAIL));
             data.put(Constants.REMOTE_MSG_INVITER_TOKEN, inviterToken);
 
-            meetingRoom = preferenceManager.getString(Constants.KEY_USER_ID) + "_" +
-                    UUID.randomUUID().toString().substring(0, 5);
-            data.put(Constants.REMOTE_MSG_MEETING_ROOM, meetingRoom);
+
+            data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
             data.put(SinchService.CALL_ID, callId);
 
             body.put(Constants.REMOTE_MSG_DATA, data);
@@ -159,7 +158,6 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
                                 Toast.makeText(OutgoingInvitationActivity.this, "Invitation send successful", Toast.LENGTH_SHORT).show();
                             } else if (type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)) {
                                 Toast.makeText(OutgoingInvitationActivity.this, "Invitation Cancelled", Toast.LENGTH_SHORT).show();
-                                getSinchServiceInterface().stopClient();
                                 finish();
                             }
                         } else {
@@ -199,6 +197,27 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
 
     }
 
+    @Override
+    protected void onServiceConnected() {
+        super.onServiceConnected();
+        if (meetingType.equals("video")){
+            com.sinch.android.rtc.calling.Call call = getSinchServiceInterface().callUserVideo(receiver.id);
+            callId = call.getCallId();
+        } else {
+            com.sinch.android.rtc.calling.Call call = getSinchServiceInterface().callUserAudio(receiver.id);
+            callId = call.getCallId();
+        }
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                inviterToken = task.getResult().getToken();
+                if (meetingType != null && receiver != null) {
+                    initiateMeeting(meetingType, receiver.token);
+                }
+            }
+        });
+    }
+
     private BroadcastReceiver invitationResponseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -206,38 +225,28 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
             if (type != null) {
                 if (type.trim().equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)) {
                     try {
-//                        URL serverURL = new URL("https://meet.jit.si");
-//
-//                        JitsiMeetConferenceOptions.Builder builder = new JitsiMeetConferenceOptions.Builder();
-//                        builder.setServerURL(serverURL);
-//                        builder.setRoom(meetingRoom);
-//
-//                        if(meetingType.equals("audio")){
-//                            builder.setAudioOnly(true);
-//                        }
-//
-//                        JitsiMeetActivity.launch(OutgoingInvitationActivity.this, builder.build());
+                        if (meetingType.equals("video")){
+                            Toast.makeText(context, "Accepted ", Toast.LENGTH_SHORT).show();
+                            Intent callScreen = new Intent(OutgoingInvitationActivity.this, VideoCallActivity.class);
+                            callScreen.putExtra(SinchService.CALL_ID, callId);
+                            callScreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(callScreen);
+                            finish();
+                        } else {
+                            Toast.makeText(context, "Accepted ", Toast.LENGTH_SHORT).show();
+                            Intent callScreen = new Intent(OutgoingInvitationActivity.this, AudioCallActivity.class);
+                            callScreen.putExtra(SinchService.CALL_ID, callId);
+                            callScreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(callScreen);
+                            finish();
+                        }
 
-//                        Intent mIntent = new Intent(OutgoingInvitationActivity.this, VideoCallActivity.class);
-//                        mIntent.putExtra(SinchService.CALL_ID, callId);
-//                        Bundle bundle = new Bundle();
-//                        bundle.putSerializable("SinchModel", sinchModel);
-//                        mIntent.putExtras(bundle);
-//                        startActivity(mIntent);
-
-                        Intent callScreen = new Intent(OutgoingInvitationActivity.this, VideoCallActivity.class);
-                        callScreen.putExtra(SinchService.CALL_ID, callId);
-                        callScreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(callScreen);
-                        Toast.makeText(context, "Accepted "+ callId, Toast.LENGTH_SHORT).show();
-                        finish();
                     } catch (Exception exception) {
                         Toast.makeText(context, exception.getMessage(), Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 } else if (type.trim().equals(Constants.REMOTE_MSG_INVITATION_REJECTED)) {
                     Toast.makeText(context, "Invitation Rejected", Toast.LENGTH_SHORT).show();
-                    getSinchServiceInterface().stopClient();
                     finish();
                 }
             }
@@ -265,35 +274,6 @@ public class OutgoingInvitationActivity extends BaseSinchActivity implements Sin
     private Bitmap getUserImage(String encodedImage) {
         byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
-
-    //this method is invoked when the connection is established with the SinchService
-    @Override
-    protected void onServiceConnected() {
-        Log.d("serviceapp", "MainActivity  onServiceConnected");
-        getSinchServiceInterface().setStartListener(this);
-    }
-
-
-    @Override
-    public void onStartFailed(SinchError error) {
-        Log.d("serviceapp", "MainActivity  onStartFailed");
-        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onStarted() {
-        com.sinch.android.rtc.calling.Call call = getSinchServiceInterface().callUserVideo(receiver.id);
-        callId = call.getCallId();
-
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                inviterToken = task.getResult().getToken();
-                if (meetingType != null && receiver != null) {
-                    initiateMeeting(meetingType, receiver.token);
-                }
-            }
-        });
     }
 
 

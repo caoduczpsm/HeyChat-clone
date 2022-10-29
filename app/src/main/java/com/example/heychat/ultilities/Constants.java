@@ -25,6 +25,12 @@ public class Constants {
     public static final String KEY_RECEIVER_IMAGE = "receiverImage";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
     public static final String KEY_AVAILABILITY = "availability";
+    public static final String KEY_COLLECTION_CALL = "call";
+    public static final String KEY_USER_CALL = "usercall";
+    public static final String KEY_USER_RECEIVER = "userreceiver";
+    public static final String KEY_CALL_DURATION = "duration";
+    public static final String KEY_CALL_CAUSE = "cause";
+    public static final String KEY_CALL_TYPE = "calltype";
     public static final String REMOTE_MSG_AUTHORIZATION ="Authorization";
     public static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
 

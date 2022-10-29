@@ -6,6 +6,23 @@
     android:orientation="vertical"
     android:background="@drawable/background_call">
 
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="0dip"
+        android:orientation="vertical">
+
+        <LinearLayout android:id="@+id/remoteVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"/>
+
+    </RelativeLayout>
+
     <LinearLayout
         android:padding="@dimen/_5sdp"
         android:id="@+id/layout_detail"
@@ -21,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="Username"
+            android:textStyle="bold"
             android:textSize="@dimen/_20sdp"
             android:textColor="@color/white" />
 
@@ -39,29 +57,12 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_above="@id/bottomPanel"
         android:layout_below="@id/layout_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="0dip"
-        android:layout_weight="3"
-        android:background="@android:color/darker_gray"
-        android:orientation="vertical">
+        android:id="@+id/localVideo"
+        android:layout_width="150dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="200dp"/>
 
-        <LinearLayout android:id="@+id/remoteVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:orientation="horizontal"/>
-
-        <RelativeLayout android:id="@+id/localVideo"
-            android:layout_width="150dp"
-            android:layout_alignParentRight="true"
-            android:layout_height="200dp"
-            android:layout_alignParentTop="true" />
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_alignParentBottom="true"

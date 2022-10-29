@@ -25,6 +25,7 @@
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/tab_background_selector.xml" value="0.166" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/tab_selected_backgroud.xml" value="0.166" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/user_selection_background.xml" value="0.167" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_audio_call.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_chat.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_chat_group.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_conversation_group.xml" value="0.25" />
@@ -63,7 +64,7 @@
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_textsize.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/tab_title.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/tablayout_custom.xml" value="0.24895833333333334" />
-        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/user_call_layaout.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/user_call_layaout.xml" value="0.264" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/users_online_layout.xml" value="0.25" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable-v24/background_button.xml" value="0.1985" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.221" />

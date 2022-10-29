@@ -6,6 +6,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,21 +17,24 @@ import com.example.heychat.ultilities.PreferenceManager;
 public abstract class BaseSinchActivity extends AppCompatActivity implements ServiceConnection {
 
     private SinchService.SinchServiceInterface mSinchServiceInterface;
-    private PreferenceManager preferenceManager;
+//    private PreferenceManager preferenceManager;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getApplicationContext().bindService(new Intent(this, SinchService.class), this,
+        intent = new Intent(this, SinchService.class);
+        getApplicationContext().bindService(intent, this,
                 BIND_AUTO_CREATE);
-        preferenceManager = new PreferenceManager(this);
+        Log.d("serviceapp", "BaseSinchActivity bindService");
+//        preferenceManager = new PreferenceManager(this);
     }
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         if (SinchService.class.getName().equals(componentName.getClassName())) {
             mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-            mSinchServiceInterface.startClient(preferenceManager.getString(Constants.KEY_USER_ID));
+//            mSinchServiceInterface.startClient(preferenceManager.getString(Constants.KEY_USER_ID));
             onServiceConnected();
         }
         Log.d("serviceapp", "BaseSinchActivity onServiceConnected");
@@ -42,7 +46,7 @@ public abstract class BaseSinchActivity extends AppCompatActivity implements Ser
             mSinchServiceInterface.stopClient();
             mSinchServiceInterface = null;
             onServiceDisconnected();
-            Log.d("serviceapp", "BaseSinchActivity onServiceDisconnected");
+            Log.d("stopClient", "BaseSinchActivity onServiceDisconnected");
         }
     }
 
@@ -51,7 +55,7 @@ public abstract class BaseSinchActivity extends AppCompatActivity implements Ser
     }
 
     protected void onServiceDisconnected() {
-        // for subclasses
+        onStop();
     }
 
     protected SinchService.SinchServiceInterface getSinchServiceInterface() {

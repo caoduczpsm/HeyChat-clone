@@ -6,13 +6,15 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     tools:context=".activities.ChatActivity"
-    android:paddingBottom="@dimen/_5sdp">
+    android:paddingBottom="@dimen/_5sdp"
+    android:background="#56CAC5C5">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_content_bottom">
-        
+        android:background="@drawable/background_content_bottom"
+        android:backgroundTint="#56CAC5C5">
+
         <androidx.cardview.widget.CardView
             android:id="@+id/btn_top"
             android:layout_marginTop="@dimen/_5sdp"
@@ -70,19 +72,104 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/layoutSuggestions"
+            android:layout_below="@id/layoutTop"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
             android:padding="@dimen/_20sdp"
-            app:stackFromEnd="true"
-            android:id="@+id/chatRecyclerView"
-            android:layout_below="@id/layoutTop"
-            android:layout_above="@id/lauoutBottom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+            android:paddingBottom="@dimen/_25sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:stackFromEnd="true">
 
         </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_above="@id/lauoutBottom"
+            android:padding="@dimen/_5sdp">
+
+            <TextView
+                android:id="@+id/textSuggestion1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="@drawable/background_text_seen_message"
+                android:backgroundTint="#8FB1AEAE"
+                android:padding="@dimen/_3sdp"
+                android:text="Hello!"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textSuggestion2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toEndOf="@id/textSuggestion1"
+                android:background="@drawable/background_text_seen_message"
+                android:backgroundTint="#8FB1AEAE"
+                android:padding="@dimen/_3sdp"
+                android:text="Beautiful!"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toEndOf="@+id/textSuggestion1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textSuggestion3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toEndOf="@id/textSuggestion2"
+                android:background="@drawable/background_text_seen_message"
+                android:backgroundTint="#8FB1AEAE"
+                android:padding="@dimen/_3sdp"
+                android:text="It's so funny!"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toEndOf="@+id/textSuggestion2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textSuggestion4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toEndOf="@id/textSuggestion3"
+                android:background="@drawable/background_text_seen_message"
+                android:backgroundTint="#8FB1AEAE"
+                android:padding="@dimen/_3sdp"
+                android:text="Ok!"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toEndOf="@+id/textSuggestion3"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textSuggestion5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toEndOf="@id/textSuggestion4"
+                android:background="@drawable/background_text_seen_message"
+                android:backgroundTint="#8FB1AEAE"
+                android:padding="@dimen/_3sdp"
+                android:text="Good idea!"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toEndOf="@+id/textSuggestion4"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:paddingLeft="@dimen/_10sdp"
@@ -152,16 +239,14 @@
                 app:cardBackgroundColor="@color/primary"
                 app:cardCornerRadius="1000dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/ic_send_image"
-                android:tint="@color/white"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_8sdp"
+                    android:src="@drawable/ic_send_image"
+                    android:tint="@color/white"/>
             </androidx.cardview.widget.CardView>
-
-
 
         </RelativeLayout>
 

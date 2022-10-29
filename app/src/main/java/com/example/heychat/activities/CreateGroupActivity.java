@@ -53,20 +53,17 @@ public class CreateGroupActivity extends AppCompatActivity implements UserSelect
 
         requestPermission();
 
-        btnSelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<User> selectedUser = usersAdapter.getSelectedUser();
-                StringBuilder userPhones = new StringBuilder();
-                for (int i = 0; i < selectedUser.size(); i++) {
-                    userPhones.append(selectedUser.get(i).id).append(",");
-                }
-                userPhones.append(preferenceManager.getString(Constants.KEY_USER_ID));
-                Intent intent = new Intent(getApplicationContext(), SetInfoGroupActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra(Constants.KEY_GROUP_MEMBER, userPhones.toString());
-                startActivity(intent);
+        btnSelection.setOnClickListener(view -> {
+            List<User> selectedUser = usersAdapter.getSelectedUser();
+            StringBuilder userPhones = new StringBuilder();
+            for (int i = 0; i < selectedUser.size(); i++) {
+                userPhones.append(selectedUser.get(i).id).append(",");
             }
+            userPhones.append(preferenceManager.getString(Constants.KEY_USER_ID));
+            Intent intent = new Intent(getApplicationContext(), SetInfoGroupActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra(Constants.KEY_GROUP_MEMBER, userPhones.toString());
+            startActivity(intent);
         });
 
     }

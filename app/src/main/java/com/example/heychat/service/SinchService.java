@@ -64,6 +64,7 @@ public class SinchService extends Service {
 
             mSinchClient.setSupportCalling(true);
             mSinchClient.startListeningOnActiveConnection();
+            Log.d("stopClient", "Start: "+ userName);
 
             mSinchClient.addSinchClientListener(new MySinchClientListener());
             mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
@@ -203,11 +204,7 @@ public class SinchService extends Service {
 
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
-//            Log.d(TAG, "Incoming call");
-//            Intent intent = new Intent(SinchService.this, IncomingInvitationActivity.class);
-//            intent.putExtra(CALL_ID, call.getCallId());
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            SinchService.this.startActivity(intent);
+
         }
     }
 

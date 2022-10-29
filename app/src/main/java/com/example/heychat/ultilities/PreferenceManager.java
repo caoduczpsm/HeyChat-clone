@@ -37,4 +37,9 @@ public class PreferenceManager {
         editor.apply();
     }
 
+    public void remove(String key){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+    }
+
 }

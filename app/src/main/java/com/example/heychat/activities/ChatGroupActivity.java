@@ -47,7 +47,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatGroupActivity extends BaseActivity {
+public class ChatGroupActivity extends BaseActivity implements MessageListener {
 
     private ActivityChatGroupBinding binding;
     private Group receiverUser;
@@ -110,18 +110,7 @@ public class ChatGroupActivity extends BaseActivity {
         chatAdapter = new ChatGroupAdapter(
                 chatMessages,
                 getBitmapFromEncodedString(receiverUser.image),
-                preferenceManager.getString(Constants.KEY_USER_ID),
-                new MessageListener() {
-                    @Override
-                    public void onMessageSelection(Boolean isSelected) {
-
-                    }
-
-                    @Override
-                    public void onGetMessage(ChatMessage chatMessage) {
-
-                    }
-                }
+                preferenceManager.getString(Constants.KEY_USER_ID), this
         );
         binding.chatRecyclerView.setAdapter(chatAdapter);
         binding.chatRecyclerView.setItemAnimator(null);
@@ -339,6 +328,17 @@ public class ChatGroupActivity extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
+
+        binding.textName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), InfoGroupActivity.class);
+                intent.putExtra(Constants.KEY_GROUP, receiverUser);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+
         binding.layoutSend.setOnClickListener(v -> sendMessage());
 
 //        CallListener callListener = new CallListener() {
@@ -418,6 +418,11 @@ public class ChatGroupActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         listenAvailabilityOfReceiver();
+    }
+
+    @Override
+    public void onMessageSelection(Boolean isSelected, int position, List<ChatMessage> chatMessages, ChatMessage chatMessage) {
+
     }
 
 }

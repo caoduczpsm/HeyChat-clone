@@ -45,7 +45,7 @@ public class UserOnlineAdapter extends RecyclerView.Adapter<UserOnlineAdapter.On
     }
 
     class OnlineViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imageView;
+        private final ImageView imageView;
 
         public OnlineViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,18 +54,17 @@ public class UserOnlineAdapter extends RecyclerView.Adapter<UserOnlineAdapter.On
 
         void setUserData(User user){
            imageView.setImageBitmap(getUserImage(user.image));
-           imageView.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   userListener.onUserClicker(user);
-               }
-           });
+           imageView.setOnClickListener(view -> userListener.onUserClicker(user));
         }
 
     }
 
     private Bitmap getUserImage(String encodedImage){
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
+        byte[] bytes = new byte[0];
+        if (encodedImage != null){
+            bytes = Base64.decode(encodedImage, Base64.DEFAULT);
+        }
+
         return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
     }
 

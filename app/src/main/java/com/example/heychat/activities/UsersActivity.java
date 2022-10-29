@@ -50,12 +50,9 @@ public class UsersActivity extends BaseActivity implements UserListener {
 
     private void setListeners(){
         binding.imageBack.setOnClickListener(v -> onBackPressed());
-        binding.imageSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                startActivity(intent);
-            }
+        binding.imageSearch.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+            startActivity(intent);
         });
     }
 

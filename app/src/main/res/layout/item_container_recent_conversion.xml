@@ -24,48 +24,58 @@
         android:layout_centerVertical="true" />
 
     <RelativeLayout
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/viewSupporter"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/viewSupporter">
+
         <TextView
             android:id="@+id/textName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="Username"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp" />
 
         <TextView
-            android:layout_toEndOf="@id/imageview"
-            android:layout_below="@id/textName"
             android:id="@+id/textRecentMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/textName"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:text="Message"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_toEndOf="@id/imageview"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="Message"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/_12ssp" />
 
         <ImageView
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="-5dp"
-            app:tint="@color/secondary_text"
             android:id="@+id/imageview"
-            android:src="@drawable/ic_send_image"
-            android:layout_below="@id/textName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:layout_below="@id/textName"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="-5dp"
+            android:src="@drawable/ic_send_image"
+            android:visibility="gone"
+            app:tint="@color/secondary_text" />
     </RelativeLayout>
+
+<!--    <TextView-->
+<!--        android:id="@+id/txtNewMessage"-->
+<!--        android:layout_width="@dimen/_10sdp"-->
+<!--        android:layout_height="@dimen/_10sdp"-->
+<!--        android:layout_marginStart="@dimen/_250sdp"-->
+<!--        android:layout_marginTop="@dimen/_20sdp"-->
+<!--        android:background="@drawable/background_new_message"-->
+<!--        android:visibility="visible"/>-->
 
     <View
         android:layout_width="match_parent"

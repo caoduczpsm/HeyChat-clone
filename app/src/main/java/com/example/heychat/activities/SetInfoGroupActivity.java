@@ -7,25 +7,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.heychat.databinding.ActivitySetInfoGroupBinding;
 import com.example.heychat.ultilities.Constants;
 import com.example.heychat.ultilities.PreferenceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -71,79 +64,38 @@ public class SetInfoGroupActivity extends AppCompatActivity {
         HashMap<String, Object> user = new HashMap<>();
         user.put(Constants.KEY_GROUP_NAME, binding.inputGroupName.getText().toString());
         user.put(Constants.KEY_GROUP_IMAGE, encodedImage);
+        user.put(Constants.KEY_GROUP_OWNER, preferenceManager.getString(Constants.KEY_USER_ID));
         //user.put(Constants.KEY_GROUP_MEMBER, getIntent().getStringExtra(Constants.KEY_GROUP_MEMBER));
 
         String[] userIds = getIntent().getStringExtra(Constants.KEY_GROUP_MEMBER).toString().trim().split(",");
 
         database.collection(Constants.KEY_COLLECTION_GROUP)
                 .add(user).addOnSuccessListener(documentReference -> {
-                    for (String userId: userIds){
+                    for (String userId : userIds) {
                         HashMap<String, Object> id = new HashMap<>();
                         id.put("Owner", true);
                         database.collection(Constants.KEY_COLLECTION_GROUP).document(documentReference.getId())
-                                .collection("groupMember").document(userId)
-                                .set(id).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        database.collection(Constants.KEY_COLLECTION_USER).document(userId)
-                                                .collection(Constants.KEY_GROUP_ID).document(documentReference.getId())
-                                                .set(id).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
-                                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                        startActivity(intent);
-                                                    }
+                                .collection(Constants.KEY_GROUP_MEMBER).document(userId)
+                                .set(id).addOnSuccessListener(aVoid ->
+                                        database.collection(Constants.KEY_COLLECTION_USER)
+                                                .document(userId)
+                                                .collection(Constants.KEY_GROUP_ID)
+                                                .document(documentReference.getId())
+                                                .set(id)
+                                                .addOnSuccessListener(aVoid1 -> {
+                                                    Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
                                                 })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
+                                                .addOnFailureListener(e -> {
 
-                                                    }
-                                                });
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
+                                                }))
+                                .addOnFailureListener(e -> {
 
-                                    }
                                 });
 
                     }
                 });
-
-//        database.collection(Constants.KEY_COLLECTION_GROUP)
-//                .add(user)
-//                .addOnSuccessListener(documentReference -> {
-//                    loading(false);
-//                    Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    showToast("Successful");
-//
-//                    String members = getIntent().getStringExtra(Constants.KEY_GROUP_MEMBER);
-//                    String[] splits = members.split(",");
-//
-//                    for (String item : splits) {
-//                        db.collection(Constants.KEY_COLLECTION_GROUP)
-//                                .get().addOnCompleteListener(task -> {
-//                                    DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
-//                                    String documentGroupID = documentSnapshot.getId();
-//                                    db.collection(Constants.KEY_COLLECTION_USER)
-//                                                    .get().addOnCompleteListener(task1 -> {
-//                                                        DocumentSnapshot snapshot = task1.getResult().getDocuments().get(0);
-//                                                        String documentUserGroupID = snapshot.getString(Constants.KEY_GROUP_ID);
-//                                                        updateData(item,  documentUserGroupID + "," + documentGroupID);
-//                                                    });
-//
-//                                });
-//                    }
-//                })
-//                .addOnFailureListener(exception -> {
-//                    loading(false);
-//                    showToast(exception.getMessage());
-//                });
     }
 
     private void updateData(String member, String groupID) {
@@ -151,30 +103,17 @@ public class SetInfoGroupActivity extends AppCompatActivity {
         userDetail.put(Constants.KEY_GROUP_ID, groupID);
         db.collection(Constants.KEY_COLLECTION_USER)
                 .whereEqualTo(Constants.KEY_EMAIL, member)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
-                            String documentID = documentSnapshot.getId();
-                            db.collection(Constants.KEY_COLLECTION_USER)
-                                    .document(documentID)
-                                    .update(userDetail)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            showToast("Successful");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            showToast("Failed");
-                                        }
-                                    });
-                        } else {
-                            showToast("Failed");
-                        }
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                        String documentID = documentSnapshot.getId();
+                        db.collection(Constants.KEY_COLLECTION_USER)
+                                .document(documentID)
+                                .update(userDetail)
+                                .addOnSuccessListener(unused -> showToast("Successful"))
+                                .addOnFailureListener(e -> showToast("Failed"));
+                    } else {
+                        showToast("Failed");
                     }
                 });
     }

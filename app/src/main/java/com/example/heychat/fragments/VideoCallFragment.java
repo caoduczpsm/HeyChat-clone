@@ -175,6 +175,8 @@ public class VideoCallFragment extends Fragment implements CallListener {
             Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
             intent.putExtra("user", user);
             intent.putExtra("type", "video");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
     }
@@ -188,6 +190,8 @@ public class VideoCallFragment extends Fragment implements CallListener {
             Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
             intent.putExtra("user", user);
             intent.putExtra("type", "audio");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
 
         }

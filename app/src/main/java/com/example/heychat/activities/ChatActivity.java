@@ -52,7 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends BaseActivity{
+public class ChatActivity extends BaseActivity implements MessageListener {
 
     private ActivityChatBinding binding;
     private User receiverUser;
@@ -118,17 +118,7 @@ public class ChatActivity extends BaseActivity{
                 chatMessages,
                 getBitmapFromEncodedString(receiverUser.image),
                 preferenceManager.getString(Constants.KEY_USER_ID),
-                new MessageListener() {
-                    @Override
-                    public void onMessageSelection(Boolean isSelected) {
-
-                    }
-
-                    @Override
-                    public void onGetMessage(ChatMessage chatMessage) {
-
-                    }
-                }
+                this
         );
         binding.chatRecyclerView.setAdapter(chatAdapter);
         binding.chatRecyclerView.setItemAnimator(null);
@@ -384,4 +374,11 @@ public class ChatActivity extends BaseActivity{
         super.onResume();
        listenAvailabilityOfReceiver();
     }
+
+
+    @Override
+    public void onMessageSelection(Boolean isSelected, int position, List<ChatMessage> chatMessages, ChatMessage chatMessage) {
+
+    }
+
 }

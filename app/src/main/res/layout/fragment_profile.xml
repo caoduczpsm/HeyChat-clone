@@ -189,6 +189,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layoutPrivateAccount"
                     android:layout_width="@dimen/_140sdp"
                     android:layout_height="@dimen/_150sdp"
                     android:layout_row="1"

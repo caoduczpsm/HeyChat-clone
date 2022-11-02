@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ClipData;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.heychat.R;
 import com.example.heychat.adapters.PrivateChatAdapter;
 import com.example.heychat.listeners.MessageListener;
@@ -41,8 +43,10 @@ import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
 import com.google.mlkit.nl.translate.TranslatorOptions;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,7 +96,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         });
     }
 
-    private void deleteData(){
+    private void deleteData() {
         database.collection(Constants.KEY_COLLECTION_ROOM)
                 .document(roomChat.id)
                 .delete();
@@ -143,7 +147,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         inputMessage = findViewById(R.id.inputeMessage);
         layoutSend = findViewById(R.id.layoutSend);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
 
         chatMessages = new ArrayList<>();
@@ -166,37 +170,35 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot documentSnapshot = task.getResult();
-                        if (Objects.equals(documentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "2")){
-                            if (!inputMessage.getText().toString().equals("")){
-                                HashMap<String, Object> message = new HashMap<>();
-                                message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-                                message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
-                                message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
-                                message.put(Constants.KEY_TIMESTAMP, new Date());
-                                database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
-                                try {
-                                    JSONArray tokens = new JSONArray();
-                                    tokens.put(preferenceManager.getString(Constants.KEY_COLLECTION_ROOM));
 
-                                    JSONObject data = new JSONObject();
-                                    data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-                                    data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
-                                    data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                                    data.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+                        if (!inputMessage.getText().toString().equals("")) {
+                            HashMap<String, Object> message = new HashMap<>();
+                            message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                            message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
+                            message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+                            message.put(Constants.KEY_TIMESTAMP, new Date());
+                            database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
+                            try {
+                                JSONArray tokens = new JSONArray();
+                                tokens.put(preferenceManager.getString(Constants.KEY_COLLECTION_ROOM));
 
-                                    JSONObject body = new JSONObject();
-                                    body.put(Constants.REMOTE_MSG_DATA, data);
-                                    body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+                                JSONObject data = new JSONObject();
+                                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                                data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
+                                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+                                data.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+
+                                JSONObject body = new JSONObject();
+                                body.put(Constants.REMOTE_MSG_DATA, data);
+                                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
 
 //                sendNotification(body.toString());
 
-                                } catch (Exception e) {
-                                    //showToast(e.getMessage());
-                                }
+                            } catch (Exception e) {
+                                //showToast(e.getMessage());
                             }
-                        } else {
-                            showToast("No one has entered the room or the other person has left the chat room");
                         }
+
                     }
                 });
 
@@ -273,7 +275,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
 
         textMessage.setText(lastMessages.get(position).message);
         textDateTime.setText(lastMessages.get(position).dateTime);
-        if (lastMessages.get(position).isSeen){
+        if (lastMessages.get(position).isSeen) {
             textSeenMessage.setText("Seen");
             imageCheck.setVisibility(View.VISIBLE);
         } else {
@@ -288,7 +290,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         layoutDetail.setVisibility(View.GONE);
 
         layoutTranslate.setOnClickListener(view -> {
-            if (textMessage.getText().toString().equals(chatMessage.message)){
+            if (textMessage.getText().toString().equals(chatMessage.message)) {
                 TranslatorOptions options;
                 if (Objects.equals(preferenceManager.getString(Constants.KEY_LANGUAGE), "VI")) {
                     options = new TranslatorOptions.Builder()
@@ -343,7 +345,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         dialog.show();
     }
 
-    private void updateDataOnFB(String key){
+    private void updateDataOnFB(String key) {
         database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .document(key)
                 .delete()

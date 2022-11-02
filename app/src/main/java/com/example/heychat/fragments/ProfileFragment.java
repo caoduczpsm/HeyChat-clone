@@ -11,10 +11,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,14 +26,14 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
-
 import com.example.heychat.R;
+import com.example.heychat.activities.MainActivity2;
 import com.example.heychat.activities.PrivateChatActivity;
 import com.example.heychat.activities.SignInActivity;
+import com.example.heychat.models.FontSize;
 import com.example.heychat.models.RoomChat;
 import com.example.heychat.ultilities.Constants;
 import com.example.heychat.ultilities.PreferenceManager;
@@ -44,7 +42,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -63,6 +60,7 @@ public class ProfileFragment extends Fragment {
     private String userId;
     private RoomChat roomChat;
     private Intent intent;
+    private int textSize = 0;
 
     public ProfileFragment() {
 
@@ -99,11 +97,12 @@ public class ProfileFragment extends Fragment {
         View change_language_btn = view.findViewById(R.id.change_language_btn);
         View change_text_size = view.findViewById(R.id.change_text_size);
         View edit_profile = view.findViewById(R.id.edit_profile_btn);
+        View block_screen_shot = view.findViewById(R.id.BlockShotID);
         LinearLayout layoutPrivateAccount = view.findViewById(R.id.layoutPrivateAccount);
         edit_profile.setOnClickListener(v -> editProfile());
         log_out_btn.setOnClickListener(v -> logout());
         change_language_btn.setOnClickListener(v -> changeLanguage());
-        change_text_size.setOnClickListener(v -> changeTextSize());
+        change_text_size.setOnClickListener(v-> changeTextSize());
 
         layoutPrivateAccount.setOnClickListener(view1 -> {
             database.collection(Constants.KEY_COLLECTION_USER)
@@ -117,6 +116,55 @@ public class ProfileFragment extends Fragment {
                             createRoomChat();
                         }
                     });
+
+        });
+
+        block_screen_shot.setOnClickListener(view12 -> {
+            final Dialog dialog = openDialog(R.layout.layout_dialog_block_screenshot);
+            Switch switch_block = dialog.findViewById(R.id.switch_block);
+            Button yes_btn = dialog.findViewById(R.id.yes_btn);
+            Button no_btn = dialog.findViewById(R.id.no_btn);
+
+            if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("unblock")){
+                switch_block.setChecked(false);
+                switch_block.setText("Unlock");
+            }else if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("block")){
+                switch_block.setChecked(true);
+                switch_block.setText("Block");
+            }
+
+            switch_block.setOnClickListener(view15 -> {
+                if (switch_block.isChecked()){
+                    switch_block.setText("Block");
+                } else {
+                    switch_block.setText("Unblock");
+                }
+            });
+
+            yes_btn.setOnClickListener(view14 -> {
+                if (switch_block.isChecked()){
+                    showToast("Disable screen shot");
+                    preferenceManager.putString(Constants.KEY_BLOCK_SCREENSHOT, "block");
+                    HashMap<String, Object> blockShot = new HashMap<>();
+                    blockShot.put(Constants.KEY_BLOCK_SCREENSHOT, true);
+                    database.collection(Constants.KEY_COLLECTION_USER)
+                            .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                            .update(blockShot);
+                } else {
+                    showToast("Enable screen shot");
+                    preferenceManager.putString(Constants.KEY_BLOCK_SCREENSHOT, "unblock");
+                    HashMap<String, Object> blockShot = new HashMap<>();
+                    blockShot.put(Constants.KEY_BLOCK_SCREENSHOT, false);
+                    database.collection(Constants.KEY_COLLECTION_USER)
+                            .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                            .update(blockShot);
+                }
+                dialog.dismiss();
+            });
+
+            no_btn.setOnClickListener(view13 -> dialog.dismiss());
+            dialog.show();
+
 
         });
 
@@ -287,14 +335,68 @@ public class ProfileFragment extends Fragment {
     private void changeTextSize() {
         final Dialog dialog = openDialog(R.layout.layout_dialog_textsize);
         SeekBar size = dialog.findViewById(R.id.seekBar);
+        TextView text = dialog.findViewById(R.id.TextSize1);
+        TextView text2 = dialog.findViewById(R.id.TextSize2);
+        TextView text3 = dialog.findViewById(R.id.textRecentMessage);
         Button yes_btn = dialog.findViewById(R.id.yes_btn);
         Button no_btn = dialog.findViewById(R.id.no_btn);
 
-        yes_btn.setOnClickListener(view -> showToast(size.getProgress() + ""));
+        if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "14")){
+            size.setProgress(0);
+        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "18")){
+            size.setProgress(1);
+        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "24")){
+            size.setProgress(2);
+        } else {
+            size.setProgress(3);
+        }
+
+        size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                textSize = getSize(i);
+                text.setTextSize(textSize);
+                text2.setTextSize(textSize);
+                text3.setTextSize(textSize);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        yes_btn.setOnClickListener(view -> {
+            FontSize.fontSize = textSize;
+            preferenceManager.putString(Constants.KEY_TEXTSIZE, String.valueOf(textSize));
+            showToast("Đã thay đổi cở chữ");
+            Intent i = new Intent(ProfileFragment.this.getActivity(), MainActivity2.class);
+            startActivity(i);
+            dialog.dismiss();
+        });
         no_btn.setOnClickListener(view -> dialog.dismiss());
 
         dialog.show();
 
+    }
+
+    public int getSize(int i){
+        int s = 0;
+        if(i==0) {
+            s =14;
+        }else if(i==1){
+            s = 18;
+        }else if(i==2){
+            s = 24;
+        }else if(i==3){
+            s = 30;
+        }
+        return s;
     }
 
     private void changeLanguage() {

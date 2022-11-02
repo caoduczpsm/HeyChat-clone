@@ -53,6 +53,7 @@
             android:visibility="visible" />
 
         <TextView
+            android:layout_toEndOf="@id/downBtn"
             android:id="@+id/textMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,6 +69,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
+
+        <ImageView
+            android:layout_below="@id/textName"
+            android:layout_marginRight="@dimen/_3sdp"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:id="@+id/downBtn"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/ic_down"/>
+
     </RelativeLayout>
 
     <TextView

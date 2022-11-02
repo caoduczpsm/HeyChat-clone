@@ -74,8 +74,14 @@ public class Constants {
     public static final String KEY_ROOM_MEMBER = "roomMember";
     public static final String KEY_COLLECTION_PRIVATE_CHAT = "privateChats";
     public static final String KEY_SEEN_MESSAGE = "seen";
+    public static final String KEY_MEMBER_SEEN_MESSAGE = "memberSeen";
+    public static final String KEY_SEEN_TIME = "seenTime";
+
 
     public static final String KEY_LANGUAGE = "language";
+    public static final String KEY_TEXTSIZE = "textSize";
+    public static final String KEY_BLOCK_SCREENSHOT = "blockScreenShot";
+    public static final String KEY_EMPTY_ROOM = "emptyRoom";
 
 
     public static HashMap<String, String> remoteMsgHeaders = null;

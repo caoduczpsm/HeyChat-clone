@@ -227,6 +227,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/BlockShotID"
                     android:layout_width="@dimen/_140sdp"
                     android:layout_height="@dimen/_150sdp"
                     android:layout_row="2"
@@ -246,7 +247,7 @@
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_edit_profile" />
+                            android:src="@drawable/ic_camera" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -255,10 +256,11 @@
                         android:layout_marginTop="@dimen/_20sdp"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:text="Edit profile"
+                        android:text="BLOCK SCREENSHOT"
                         android:textAllCaps="true"
+                        android:textStyle="bold"
                         android:textColor="@color/primary"
-                        android:textSize="@dimen/_10ssp" />
+                        android:textSize="@dimen/_13ssp" />
 
                 </LinearLayout>
 

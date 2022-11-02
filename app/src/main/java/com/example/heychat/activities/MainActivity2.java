@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -60,7 +62,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity2 extends BaseSinchActivity implements UserListener, SinchService.StartFailedListener{
+public class MainActivity2 extends BaseSinchActivity implements UserListener, SinchService.StartFailedListener {
 
     private ActivityMain2Binding binding;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -87,33 +89,33 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         binding.recyclerviewUserOnline.setAdapter(userOnlineAdapter);
         getUsersOnline();
 
-        binding.searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                startActivity(intent);
+        if (preferenceManager.getString(Constants.KEY_LANGUAGE) == null) {
+            preferenceManager.putString(Constants.KEY_LANGUAGE, "VI");
+        }
 
-//                Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
-//                startActivity(intent);
+        if (preferenceManager.getString(Constants.KEY_TEXTSIZE) == null)
+            preferenceManager.putString(Constants.KEY_TEXTSIZE, "18");
 
-            }
+        if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT) == null)
+            preferenceManager.putString(Constants.KEY_BLOCK_SCREENSHOT, "unlock");
+
+        binding.searchButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+            startActivity(intent);
         });
 
-        binding.groupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CreateGroupActivity.class);
-                startActivity(intent);
-            }
+        binding.groupButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), CreateGroupActivity.class);
+            startActivity(intent);
         });
 
 
     }
 
-    private void getUsersOnline(){
+    private void getUsersOnline() {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         database.collection(Constants.KEY_COLLECTION_USER).get()
-                .addOnCompleteListener(task-> {
+                .addOnCompleteListener(task -> {
                             String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
                             if (task.isSuccessful() && task.getResult() != null) {
                                 users.clear();
@@ -121,7 +123,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
                                     if (currentUserId.equals(queryDocumentSnapshot.getId())) {
                                         continue;
                                     }
-                                    if(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN) != null && !queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN).isEmpty()){
+                                    if (queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN) != null && !queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN).isEmpty()) {
                                         User user = new User();
                                         user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
                                         user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
@@ -138,7 +140,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
                 );
     }
 
-    private void requestPermission(){
+    private void requestPermission() {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
@@ -164,7 +166,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.tablayout, binding.viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                switch (position){
+                switch (position) {
                     case 0: {
                         tab.setText("Chat");
                         break;
@@ -172,12 +174,12 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
                     case 1: {
                         tab.setText("Call");
                         break;
-                        }
-                    case 2:{
+                    }
+                    case 2: {
                         tab.setText("Contacts");
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         tab.setText("Profile");
                         break;
                     }
@@ -186,7 +188,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         });
         tabLayoutMediator.attach();
 
-        for(int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             TextView textView = (TextView) LayoutInflater.from(this).inflate(R.layout.tab_title, null, false);
             binding.tablayout.getTabAt(i).setCustomView(textView);
         }
@@ -194,7 +196,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         binding.tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
+                switch (tab.getPosition()) {
                     case 0: {
                         collapsingToolbarLayout.setTitle("Chat with friends");
                         break;
@@ -203,11 +205,11 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
                         collapsingToolbarLayout.setTitle("Call with friends");
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         collapsingToolbarLayout.setTitle("Contacts");
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         collapsingToolbarLayout.setTitle("Profile");
                         break;
                     }
@@ -264,6 +266,16 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
             getSinchServiceInterface().stopClient();
         }
         super.onDestroy();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+
+        final Configuration override = new Configuration(newBase.getResources().getConfiguration());
+        override.fontScale = 1.0f;
+        applyOverrideConfiguration(override);
+
+        super.attachBaseContext(newBase);
     }
 
 

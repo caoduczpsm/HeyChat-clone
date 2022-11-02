@@ -341,31 +341,6 @@ public class ChatGroupActivity extends BaseActivity implements MessageListener {
 
         binding.layoutSend.setOnClickListener(v -> sendMessage());
 
-//        CallListener callListener = new CallListener() {
-//            @Override
-//            public void initiateVideoCall(User user) {
-//                if (user.token == null || user.token.trim().isEmpty()) {
-//                    Toast.makeText(getApplicationContext(), user.name + "is not available for video call", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Intent intent = new Intent(getApplicationContext(), OutgoingInvitationActivity.class);
-//                    intent.putExtra("user", user);
-//                    intent.putExtra("type", "video");
-//                    startActivity(intent);
-//                }
-//            }
-//
-//            @Override
-//            public void initiateAudioCall(User user) {
-//                if (user.token == null || user.token.trim().isEmpty()) {
-//                    Toast.makeText(getApplicationContext(), user.name + "is not available for audio call", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Intent intent = new Intent(getApplicationContext(), OutgoingInvitationActivity.class);
-//                    intent.putExtra("user", user);
-//                    intent.putExtra("type", "audio");
-//                    startActivity(intent);
-//                }
-//            }
-//        };
     }
 
     private void addConversion(HashMap<String, Object> conversion) {

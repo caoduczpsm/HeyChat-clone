@@ -1,5 +1,6 @@
 package com.example.heychat.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +29,10 @@ import com.example.heychat.models.ChatMessage;
 import com.example.heychat.models.RoomChat;
 import com.example.heychat.ultilities.Constants;
 import com.example.heychat.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -139,6 +143,8 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         inputMessage = findViewById(R.id.inputeMessage);
         layoutSend = findViewById(R.id.layoutSend);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+
 
         chatMessages = new ArrayList<>();
         chatAdapter = new PrivateChatAdapter(
@@ -153,34 +159,46 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
     }
 
     private void sendMessage() {
-        if (!inputMessage.getText().toString().equals("")){
-            HashMap<String, Object> message = new HashMap<>();
-            message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-            message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
-            message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
-            message.put(Constants.KEY_TIMESTAMP, new Date());
-            database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
-            try {
-                JSONArray tokens = new JSONArray();
-                tokens.put(preferenceManager.getString(Constants.KEY_COLLECTION_ROOM));
+        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
+                .document(roomChat.id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (Objects.equals(documentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "2")){
+                            if (!inputMessage.getText().toString().equals("")){
+                                HashMap<String, Object> message = new HashMap<>();
+                                message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                                message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
+                                message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+                                message.put(Constants.KEY_TIMESTAMP, new Date());
+                                database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
+                                try {
+                                    JSONArray tokens = new JSONArray();
+                                    tokens.put(preferenceManager.getString(Constants.KEY_COLLECTION_ROOM));
 
-                JSONObject data = new JSONObject();
-                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-                data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
-                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+                                    JSONObject data = new JSONObject();
+                                    data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                                    data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
+                                    data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+                                    data.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
 
-                JSONObject body = new JSONObject();
-                body.put(Constants.REMOTE_MSG_DATA, data);
-                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+                                    JSONObject body = new JSONObject();
+                                    body.put(Constants.REMOTE_MSG_DATA, data);
+                                    body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
 
 //                sendNotification(body.toString());
 
-            } catch (Exception e) {
-                //showToast(e.getMessage());
-            }
-        }
-
+                                } catch (Exception e) {
+                                    //showToast(e.getMessage());
+                                }
+                            }
+                        } else {
+                            showToast("No one has entered the room or the other person has left the chat room");
+                        }
+                    }
+                });
 
         inputMessage.setText(null);
     }
@@ -248,9 +266,10 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         TextView textSeenMessage = dialog.findViewById(R.id.textSeenMessage);
         RelativeLayout layoutTranslate = dialog.findViewById(R.id.relativeLayoutTranslate);
         RelativeLayout layoutCopy = dialog.findViewById(R.id.relativeLayoutCopy);
-        RelativeLayout layoutMultipleSelection = dialog.findViewById(R.id.relativeLayoutMultipleSelection);
+        RelativeLayout layoutDetail = dialog.findViewById(R.id.relativeLayoutDetail);
         RelativeLayout layoutDelete = dialog.findViewById(R.id.relativeLayoutDelete);
         ImageView imageCheck = dialog.findViewById(R.id.imageCheck);
+        ImageView imageTranslate = dialog.findViewById(R.id.imageTranslate);
 
         textMessage.setText(lastMessages.get(position).message);
         textDateTime.setText(lastMessages.get(position).dateTime);
@@ -262,30 +281,41 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
             imageCheck.setVisibility(View.GONE);
         }
 
+        layoutDelete.setVisibility(View.GONE);
+        textSeenMessage.setVisibility(View.GONE);
+        imageCheck.setVisibility(View.GONE);
+        layoutCopy.setVisibility(View.GONE);
+        layoutDetail.setVisibility(View.GONE);
+
         layoutTranslate.setOnClickListener(view -> {
-            TranslatorOptions options;
-            if (Objects.equals(preferenceManager.getString(Constants.KEY_LANGUAGE), "VI")) {
-                options = new TranslatorOptions.Builder()
-                        .setSourceLanguage(TranslateLanguage.ENGLISH)
-                        .setTargetLanguage(TranslateLanguage.VIETNAMESE)
-                        .build();
+            if (textMessage.getText().toString().equals(chatMessage.message)){
+                TranslatorOptions options;
+                if (Objects.equals(preferenceManager.getString(Constants.KEY_LANGUAGE), "VI")) {
+                    options = new TranslatorOptions.Builder()
+                            .setSourceLanguage(TranslateLanguage.ENGLISH)
+                            .setTargetLanguage(TranslateLanguage.VIETNAMESE)
+                            .build();
+                } else {
+                    options = new TranslatorOptions.Builder()
+                            .setSourceLanguage(TranslateLanguage.VIETNAMESE)
+                            .setTargetLanguage(TranslateLanguage.ENGLISH)
+                            .build();
+                }
+
+                Translator englishVITranslator = Translation.getClient(options);
+
+                getLifecycle().addObserver(englishVITranslator);
+
+
+                englishVITranslator.downloadModelIfNeeded().addOnSuccessListener(unused -> englishVITranslator.translate(chatMessage.message)
+                        .addOnSuccessListener(textMessage::setText)
+                        .addOnFailureListener(e -> showToast(e.getMessage()))).addOnFailureListener(e -> showToast(e.getMessage()));
+                imageTranslate.setImageResource(R.drawable.ic_undo);
+                showToast("Translated the message");
             } else {
-                options = new TranslatorOptions.Builder()
-                        .setSourceLanguage(TranslateLanguage.VIETNAMESE)
-                        .setTargetLanguage(TranslateLanguage.ENGLISH)
-                        .build();
+                imageTranslate.setImageResource(R.drawable.ic_translate);
+                textMessage.setText(chatMessage.message);
             }
-
-            Translator englishVITranslator = Translation.getClient(options);
-
-            getLifecycle().addObserver(englishVITranslator);
-
-
-            englishVITranslator.downloadModelIfNeeded().addOnSuccessListener(unused -> englishVITranslator.translate(textMessage.getText().toString())
-                    .addOnSuccessListener(textMessage::setText)
-                    .addOnFailureListener(e -> showToast(e.getMessage()))).addOnFailureListener(e -> showToast(e.getMessage()));
-
-            showToast("Translated the message");
         });
 
         layoutCopy.setOnClickListener(view -> {
@@ -296,25 +326,25 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
             dialog.dismiss();
         });
 
-        layoutMultipleSelection.setOnClickListener(view -> {
+        layoutDetail.setOnClickListener(view -> {
 
         });
 
-        layoutDelete.setOnClickListener(view -> {
-            chatMessages.remove(position);
-            chatAdapter.notifyItemRemoved(position);
-            chatAdapter.notifyItemChanged(position);
-            chatAdapter.notifyDataSetChanged();
-            chatAdapter.notifyItemRangeInserted(0, chatMessages.size());
-            updateDataOnFB(chatMessage.id);
-            dialog.dismiss();
-        });
+//        layoutDelete.setOnClickListener(view -> {
+//            chatMessages.remove(position);
+//            chatAdapter.notifyItemRemoved(position);
+//            chatAdapter.notifyItemChanged(position);
+//            chatAdapter.notifyDataSetChanged();
+//            chatAdapter.notifyItemRangeInserted(0, chatMessages.size());
+//            updateDataOnFB(chatMessage.id);
+//            dialog.dismiss();
+//        });
 
         dialog.show();
     }
 
     private void updateDataOnFB(String key){
-        database.collection(Constants.KEY_COLLECTION_CHAT_GROUPS)
+        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .document(key)
                 .delete()
                 .addOnSuccessListener(unused -> showToast("Delete Message Successfully!"))
@@ -323,7 +353,7 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
 
 
     private Dialog openDialog(int layout) {
-        final Dialog dialog = new Dialog(getApplicationContext());
+        final Dialog dialog = new Dialog(PrivateChatActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(layout);
         dialog.setCancelable(true);

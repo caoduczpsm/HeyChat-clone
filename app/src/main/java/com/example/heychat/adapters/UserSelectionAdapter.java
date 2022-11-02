@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.heychat.R;
 import com.example.heychat.listeners.UserSelectionListener;
 import com.example.heychat.models.User;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,9 +85,12 @@ public class UserSelectionAdapter extends RecyclerView.Adapter<UserSelectionAdap
         }
 
         void bindUserSelection(final User user){
+            PreferenceManager preferenceManager = new PreferenceManager(itemView.getContext());
             imageProfile.setImageBitmap(getUserImage(user.image));
             textName.setText(user.name);
             textEmail.setText(user.email);
+            textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
+            textEmail.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE))-5);
             if (user.isSelected){
                 viewBackground.setBackgroundResource(R.drawable.background_user_selected);
                 imageSelected.setVisibility(View.VISIBLE);

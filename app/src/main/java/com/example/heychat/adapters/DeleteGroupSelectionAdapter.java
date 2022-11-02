@@ -17,6 +17,8 @@ import com.example.heychat.R;
 import com.example.heychat.listeners.GroupMemberListener;
 import com.example.heychat.listeners.UserSelectionListener;
 import com.example.heychat.models.User;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,9 @@ public class DeleteGroupSelectionAdapter extends RecyclerView.Adapter<DeleteGrou
             imageProfile.setImageBitmap(getUserImage(user.image));
             textName.setText(user.name);
             textEmail.setText(user.email);
+            PreferenceManager preferenceManager = new PreferenceManager(itemView.getContext());
+            textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
+            textEmail.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE))-4);
             if (user.isSelected){
                 viewBackground.setBackgroundResource(R.drawable.background_user_selected);
                 imageSelected.setVisibility(View.VISIBLE);

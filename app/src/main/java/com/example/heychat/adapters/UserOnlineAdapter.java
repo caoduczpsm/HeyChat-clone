@@ -53,8 +53,8 @@ public class UserOnlineAdapter extends RecyclerView.Adapter<UserOnlineAdapter.On
         }
 
         void setUserData(User user){
-           imageView.setImageBitmap(getUserImage(user.image));
-           imageView.setOnClickListener(view -> userListener.onUserClicker(user));
+            imageView.setImageBitmap(getUserImage(user.image));
+            imageView.setOnClickListener(view -> userListener.onUserClicker(user));
         }
 
     }

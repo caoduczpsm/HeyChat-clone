@@ -77,43 +77,6 @@ public class GroupActivity extends BaseActivity implements GroupListener {
 
                     }
                 });
-
-
-//        database.collection(Constants.KEY_COLLECTION_GROUP)
-//                .get()
-//                .addOnCompleteListener(taskGroup -> {
-//                    loading(false);
-//                    if(taskGroup.isSuccessful() && taskGroup.getResult() != null){
-//                        for (QueryDocumentSnapshot queryDocumentSnapshot : taskGroup.getResult()) {
-//                            String memberID = queryDocumentSnapshot.getString(Constants.KEY_GROUP_MEMBER);
-//                            assert memberID != null;
-//                            String[] member = memberID.split(",");
-//                            for (String item : member) {
-//                                if (item.equals(preferenceManager.getString(Constants.KEY_EMAIL))){
-//                                    Group group = new Group();
-//                                    group.name = queryDocumentSnapshot.getString(Constants.KEY_GROUP_NAME);
-//                                    group.image = queryDocumentSnapshot.getString(Constants.KEY_GROUP_IMAGE);
-//                                    group.id = queryDocumentSnapshot.getId();
-//                                    group.member = queryDocumentSnapshot.getString(Constants.KEY_GROUP_MEMBER);
-//                                    group.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-//                                    groups.add(group);
-//                                }
-//                            }
-//                        }
-//                        if (groups.size() > 0) {
-//                            groupAdapter = new GroupAdapter(groups, this);
-//                            binding.userRecyclerView.setAdapter(groupAdapter);
-//                            binding.userRecyclerView.setVisibility(View.VISIBLE);
-//                        } else {
-//                            showErrorMessage();
-//                        }
-//                    } else{
-//                        showErrorMessage();
-//                    }
-//
-//
-//                });
-
     }
 
     private void showErrorMessage() {

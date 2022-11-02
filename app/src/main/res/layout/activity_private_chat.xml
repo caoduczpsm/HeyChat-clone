@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     tools:context=".activities.PrivateChatActivity"
-    android:paddingBottom="@dimen/_15sdp"
+    android:paddingBottom="@dimen/_3sdp"
     android:backgroundTint="@color/black"
     android:background="@color/black">
 

@@ -21,28 +21,19 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        android:visibility="visible"
+        app:layout_constraintHeight_percent="0.8"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/_50sdp"
-        android:layout_marginBottom="@dimen/_25sdp"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_title"
-        app:layout_constraintBottom_toTopOf="@id/linearLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/userRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    </RelativeLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_title" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -51,6 +42,7 @@
         android:layout_gravity="bottom"
         android:padding="@dimen/_10sdp"
         android:weightSum="1"
+        app:layout_constraintTop_toBottomOf="@id/userRecyclerView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

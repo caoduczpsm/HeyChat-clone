@@ -13,6 +13,8 @@ import com.example.heychat.databinding.ItemContainerUserBinding;
 import com.example.heychat.listeners.GroupMemberListener;
 import com.example.heychat.listeners.UserListener;
 import com.example.heychat.models.User;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.List;
 
@@ -58,6 +60,9 @@ public class ChangeTeamLeaderAdapter extends RecyclerView.Adapter<ChangeTeamLead
             binding.textName.setText(user.name);
             binding.textEmail.setText(user.email);
             binding.imageProfile.setImageBitmap(getUserImage(user.image));
+            PreferenceManager preferenceManager = new PreferenceManager(itemView.getContext());
+            binding.textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
+            binding.textEmail.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE))-4);
             binding.getRoot().setOnClickListener(v -> groupMemberListener.onChangeTeamLeadClicker(user));
         }
 

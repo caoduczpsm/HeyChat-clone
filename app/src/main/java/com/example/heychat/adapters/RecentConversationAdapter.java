@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.heychat.databinding.ItemContainerRecentConversionBinding;
 import com.example.heychat.listeners.ConversionListener;
 import com.example.heychat.models.ChatMessage;
+import com.example.heychat.models.FontSize;
 import com.example.heychat.models.Group;
 import com.example.heychat.models.User;
 import com.example.heychat.ultilities.Constants;
@@ -76,6 +77,9 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
             binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
+            PreferenceManager preferenceManager = new PreferenceManager(this.itemView.getContext());
+            binding.textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE))+1);
+            binding.textRecentMessage.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
 //            Log.d("OOOO", "++"+chatMessage.type);
 
             binding.getRoot().setOnClickListener(view -> {

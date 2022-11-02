@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -69,6 +70,7 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
     private ChangeTeamLeaderAdapter changeTeamLeaderAdapter;
     private RecyclerView userRecyclerView;
     private List<User> users;
+    private List<String> groupMember;
     private final ArrayList<String> contactList = new ArrayList<>();
 
     @Override
@@ -95,6 +97,8 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
         textName = findViewById(R.id.textName);
         imageProfile = findViewById(R.id.imageProfile);
 
+        textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)) + 2);
+
         group = (Group) getIntent().getSerializableExtra(Constants.KEY_GROUP);
 
         database.collection(Constants.KEY_COLLECTION_GROUP)
@@ -102,10 +106,21 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
                 .get()
                 .addOnCompleteListener(task -> {
                     DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.getString(Constants.KEY_GROUP_OWNER).equals(preferenceManager.getString(Constants.KEY_USER_ID))) {
+                    if (Objects.equals(documentSnapshot.getString(Constants.KEY_GROUP_OWNER), preferenceManager.getString(Constants.KEY_USER_ID))) {
                         layoutChangeTeamLeader.setVisibility(View.VISIBLE);
                         layoutDisbandingGroup.setVisibility(View.VISIBLE);
                         layoutDeleteMember.setVisibility(View.VISIBLE);
+                    }
+                });
+
+        groupMember = new ArrayList<>();
+        database.collection(Constants.KEY_COLLECTION_GROUP)
+                .document(group.id)
+                .collection(Constants.KEY_GROUP_MEMBER)
+                .get()
+                .addOnCompleteListener(task -> {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                        groupMember.add(queryDocumentSnapshot.getId());
                     }
                 });
 
@@ -113,12 +128,11 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void setListener() {
 
         imageBack.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            finish();
         });
 
         layoutDisbandingGroup.setOnClickListener(view -> disbandingGroup());
@@ -169,6 +183,7 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
                             .collection(Constants.KEY_GROUP_ID)
                             .document(group.id)
                             .delete();
+                    groupMember.remove(selectedUser.get(i).id);
                 }
                 dialog.dismiss();
                 showToast("Delete Member Successfully");
@@ -180,16 +195,19 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
 
         layoutAddMember.setOnClickListener(view -> {
             final Dialog dialog = openDialog(R.layout.layout_dialog_add_group_member);
+            assert dialog != null;
             userRecyclerView = dialog.findViewById(R.id.userRecyclerView);
             Button no_btn = dialog.findViewById(R.id.no_btn);
             Button btnAdd = dialog.findViewById(R.id.btnAdd);
 
             users = new ArrayList<>();
+            users.clear();
             addGroupSelectionAdapter = new AddGroupSelectionAdapter(users, this);
             userRecyclerView.setAdapter(addGroupSelectionAdapter);
             userRecyclerView.setVisibility(View.VISIBLE);
+
+            getContactList();
             getUsers("add");
-            userRecyclerView.setHasFixedSize(true);
 
             btnAdd.setOnClickListener(view13 -> {
                 List<User> selectedUser = addGroupSelectionAdapter.getSelectedUser();
@@ -200,25 +218,25 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
                     database.collection(Constants.KEY_COLLECTION_GROUP)
                             .document(group.id)
                             .collection(Constants.KEY_GROUP_MEMBER)
-                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
-                                        if (!userID.equals(queryDocumentSnapshot.getId())){
-                                            database.collection(Constants.KEY_COLLECTION_GROUP)
-                                                    .document(group.id)
-                                                    .collection(Constants.KEY_GROUP_MEMBER).document(userID)
-                                                    .set(id)
-                                                    .addOnSuccessListener(unused -> {
-                                                        database.collection(Constants.KEY_COLLECTION_USER)
-                                                                .document(userID)
-                                                                .collection(Constants.KEY_GROUP_ID)
-                                                                .document(group.id)
-                                                                .set(id);
-                                                        dialog.dismiss();
+                            .get()
+                            .addOnCompleteListener(task -> {
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                    if (!userID.equals(queryDocumentSnapshot.getId())) {
+                                        database.collection(Constants.KEY_COLLECTION_GROUP)
+                                                .document(group.id)
+                                                .collection(Constants.KEY_GROUP_MEMBER)
+                                                .document(userID)
+                                                .set(id)
+                                                .addOnSuccessListener(unused -> {
+                                                    database.collection(Constants.KEY_COLLECTION_USER)
+                                                            .document(userID)
+                                                            .collection(Constants.KEY_GROUP_ID)
+                                                            .document(group.id)
+                                                            .set(id);
+                                                    groupMember.add(userID);
+                                                    dialog.dismiss();
 
-                                                    });
-                                        }
+                                                });
                                     }
                                 }
                             });
@@ -226,17 +244,18 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
                 }
                 showToast("Add Member Successfully");
             });
-
             no_btn.setOnClickListener(view1 -> dialog.dismiss());
             dialog.show();
+            users.clear();
+            addGroupSelectionAdapter.notifyDataSetChanged();
         });
 
-        users = new ArrayList<>();
-        changeTeamLeaderAdapter = new ChangeTeamLeaderAdapter(users, this);
         layoutChangeTeamLeader.setOnClickListener(view -> {
 
             final Dialog changeTeamLeaderDialog = openDialog(R.layout.layout_dialog_change_team_leader);
-
+            users = new ArrayList<>();
+            changeTeamLeaderAdapter = new ChangeTeamLeaderAdapter(users, this);
+            assert changeTeamLeaderDialog != null;
             userRecyclerView = changeTeamLeaderDialog.findViewById(R.id.userRecyclerView);
             Button no_btn = changeTeamLeaderDialog.findViewById(R.id.no_btn);
 
@@ -244,7 +263,6 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
             userRecyclerView.setVisibility(View.VISIBLE);
 
             getUsers("change");
-            userRecyclerView.setHasFixedSize(true);
 
             no_btn.setOnClickListener(view1 -> changeTeamLeaderDialog.dismiss());
             changeTeamLeaderDialog.show();
@@ -256,79 +274,71 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
     @SuppressLint("NotifyDataSetChanged")
     private void getUsers(String type) {
         if (type.equals("add")) {
-            getContactList();
 
             database.collection(Constants.KEY_COLLECTION_USER)
                     .get()
-                    .addOnCompleteListener(task12 -> {
-                        for (QueryDocumentSnapshot queryDocumentSnapshot1 : task12.getResult()) {
-                            for (int i = 0; i < contactList.size(); i++) {
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            users.clear();
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                for (int i = 0; i < contactList.size(); i++) {
+                                    if (contactList.get(i).equals(queryDocumentSnapshot.getString(Constants.KEY_EMAIL))) {
+                                        User user = new User();
+                                        user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
+                                        user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
+                                        user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
+                                        user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                                        user.id = queryDocumentSnapshot.getId();
+                                        users.add(user);
+                                    }
+                                    addGroupSelectionAdapter.notifyDataSetChanged();
+                                }
+                            }
 
-                                if (contactList.get(i).equals(queryDocumentSnapshot1.getString(Constants.KEY_EMAIL))) {
+                        }
+                    });
+        } else {
+            for (int i = 0; i < groupMember.size(); i++) {
+                Log.d("CCC", groupMember.get(i));
+                database.collection(Constants.KEY_COLLECTION_USER)
+                        .document(groupMember.get(i))
+                        .get()
+                        .addOnCompleteListener(task1 -> {
+                            DocumentSnapshot documentSnapshot = task1.getResult();
+                            if (type.equals("list")) {
+                                User user = new User();
+                                user.name = documentSnapshot.getString(Constants.KEY_NAME);
+                                user.email = documentSnapshot.getString(Constants.KEY_EMAIL);
+                                user.image = documentSnapshot.getString(Constants.KEY_IMAGE);
+                                user.token = documentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                                user.id = documentSnapshot.getId();
+                                users.add(user);
+                            } else if (type.equals("delete") || type.equals("change")) {
+                                if (!documentSnapshot.getId().equals(preferenceManager.getString(Constants.KEY_USER_ID))) {
                                     User user = new User();
-                                    user.name = queryDocumentSnapshot1.getString(Constants.KEY_NAME);
-                                    user.email = queryDocumentSnapshot1.getString(Constants.KEY_EMAIL);
-                                    user.image = queryDocumentSnapshot1.getString(Constants.KEY_IMAGE);
-                                    user.token = queryDocumentSnapshot1.getString(Constants.KEY_FCM_TOKEN);
-                                    user.id = queryDocumentSnapshot1.getId();
+                                    user.name = documentSnapshot.getString(Constants.KEY_NAME);
+                                    user.email = documentSnapshot.getString(Constants.KEY_EMAIL);
+                                    user.image = documentSnapshot.getString(Constants.KEY_IMAGE);
+                                    user.token = documentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                                    user.id = documentSnapshot.getId();
                                     users.add(user);
                                 }
-
                             }
-                            addGroupSelectionAdapter.notifyDataSetChanged();
-                        }
 
-                    });
+                            switch (type) {
+                                case "list":
+                                    usersAdapter.notifyDataSetChanged();
+                                    break;
+                                case "delete":
+                                    deleteGroupSelectionAdapter.notifyDataSetChanged();
+                                    break;
+                                case "change":
+                                    changeTeamLeaderAdapter.notifyDataSetChanged();
+                                    break;
+                            }
 
-        } else {
-            database.collection(Constants.KEY_COLLECTION_GROUP)
-                    .document(group.id)
-                    .collection(Constants.KEY_GROUP_MEMBER)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        for (QueryDocumentSnapshot ignored : task.getResult()) {
-                            database.collection(Constants.KEY_COLLECTION_USER)
-                                    .document(ignored.getId())
-                                    .get()
-                                    .addOnCompleteListener(task1 -> {
-                                        DocumentSnapshot documentSnapshot = task1.getResult();
-                                        if (type.equals("list")) {
-                                            User user = new User();
-                                            user.name = documentSnapshot.getString(Constants.KEY_NAME);
-                                            user.email = documentSnapshot.getString(Constants.KEY_EMAIL);
-                                            user.image = documentSnapshot.getString(Constants.KEY_IMAGE);
-                                            user.token = documentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                                            user.id = documentSnapshot.getId();
-                                            users.add(user);
-                                        } else if (type.equals("delete") || type.equals("change")) {
-                                            if (!documentSnapshot.getId().equals(preferenceManager.getString(Constants.KEY_USER_ID))) {
-                                                User user = new User();
-                                                user.name = documentSnapshot.getString(Constants.KEY_NAME);
-                                                user.email = documentSnapshot.getString(Constants.KEY_EMAIL);
-                                                user.image = documentSnapshot.getString(Constants.KEY_IMAGE);
-                                                user.token = documentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                                                user.id = documentSnapshot.getId();
-                                                users.add(user);
-                                            }
-                                        }
-
-                                        switch (type) {
-                                            case "list":
-                                                usersAdapter.notifyDataSetChanged();
-                                                break;
-                                            case "delete":
-                                                deleteGroupSelectionAdapter.notifyDataSetChanged();
-                                                break;
-                                            case "change":
-                                                changeTeamLeaderAdapter.notifyDataSetChanged();
-                                                break;
-                                        }
-
-                                    });
-
-                        }
-
-                    });
+                        });
+            }
         }
 
     }
@@ -513,10 +523,10 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
     }
 
     private void getContactList() {
+        contactList.clear();
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
             if (cursor.getCount() > 0) {
-
                 while (cursor.moveToNext()) {
                     @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     Uri uriPhone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;

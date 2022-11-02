@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.heychat.databinding.ItemContainerRecentConversionBinding;
 import com.example.heychat.listeners.ConversationGroupListener;
 import com.example.heychat.models.ChatMessage;
+import com.example.heychat.models.FontSize;
 import com.example.heychat.models.Group;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.List;
 
@@ -61,6 +64,8 @@ public class RecentConversationGroupAdapter extends RecyclerView.Adapter<RecentC
             binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
+            PreferenceManager preferenceManager = new PreferenceManager(this.itemView.getContext());
+            binding.textRecentMessage.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
             binding.getRoot().setOnClickListener(view -> {
                 Group group = new Group();
                 group.id = chatMessage.conversionId;

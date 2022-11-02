@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.heychat.databinding.ItemContainerUserBinding;
 import com.example.heychat.listeners.UserListener;
 import com.example.heychat.models.User;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.List;
 
@@ -54,9 +56,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         }
 
         void setUserData(User user){
+            PreferenceManager preferenceManager = new PreferenceManager(itemView.getContext());
             binding.textName.setText(user.name);
             binding.textEmail.setText(user.email);
             binding.imageProfile.setImageBitmap(getUserImage(user.image));
+            binding.textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
+            binding.textEmail.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE))-5);
             binding.getRoot().setOnClickListener(v -> userListener.onUserClicker(user));
         }
 

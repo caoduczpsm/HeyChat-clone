@@ -8,11 +8,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
+import com.example.heychat.adapters.ChatBottomSheetFragment;
 import com.example.heychat.adapters.UsersAdapter;
 import com.example.heychat.databinding.ActivitySearchBinding;
 import com.example.heychat.listeners.UserListener;
 import com.example.heychat.models.User;
 import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -26,12 +28,14 @@ public class SearchActivity extends AppCompatActivity implements UserListener {
     FirebaseFirestore database;
     private UsersAdapter usersAdapter;
     private List<User> users;
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        preferenceManager = new PreferenceManager(this);
         setListeners();
         users = new ArrayList<>();
         usersAdapter = new UsersAdapter(users, this);
@@ -48,7 +52,7 @@ public class SearchActivity extends AppCompatActivity implements UserListener {
                     if(task.isSuccessful() && task.getResult() != null){
                         users.clear();
                         for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
-                            if (queryDocumentSnapshot.getString(Constants.KEY_EMAIL).contains(searchText) && !searchText.isEmpty()){
+                            if (queryDocumentSnapshot.getString(Constants.KEY_EMAIL).contains(searchText) && !searchText.isEmpty() && !queryDocumentSnapshot.getString(Constants.KEY_EMAIL).equals(preferenceManager.getString(Constants.KEY_EMAIL))){
                                 User user = new User();
                                 user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
                                 user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
@@ -58,6 +62,7 @@ public class SearchActivity extends AppCompatActivity implements UserListener {
                                 users.add(user);
                             }
                         }
+                        binding.textErrorMessage.setVisibility(View.GONE);
                         usersAdapter.notifyDataSetChanged();
                         if (users.size() <= 0){
                             showErrorMessage();
@@ -71,7 +76,6 @@ public class SearchActivity extends AppCompatActivity implements UserListener {
 
     private void setListeners () {
         binding.imageBack.setOnClickListener(v -> onBackPressed());
-        binding.imageSearch.setOnClickListener(view -> searchUser(binding.edtSearch.getText().toString().trim()));
         binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -105,9 +109,7 @@ public class SearchActivity extends AppCompatActivity implements UserListener {
 
     @Override
     public void onUserClicker(User user) {
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra(Constants.KEY_USER, user);
-        startActivity(intent);
-        finish();
+        ChatBottomSheetFragment bottomSheetFragment = ChatBottomSheetFragment.newInstance(user);
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
     }
 }

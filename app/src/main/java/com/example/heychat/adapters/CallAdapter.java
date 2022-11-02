@@ -1,7 +1,6 @@
 package com.example.heychat.adapters;
 
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.heychat.R;
 import com.example.heychat.listeners.CallListener;
 import com.example.heychat.models.CallModel;
+import com.example.heychat.ultilities.Constants;
+import com.example.heychat.ultilities.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
         this.callListener = callListener;
     }
 
-    class CallViewHolder extends RecyclerView.ViewHolder{
+    class CallViewHolder extends RecyclerView.ViewHolder {
         TextView username;
         CircleImageView image_user;
         ImageView image_type_call;
@@ -49,18 +50,21 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
             typecall = itemView.findViewById(R.id.typeCall);
         }
 
-        void setUserData(CallModel call){
-            if (call.user != null){
+        void setUserData(CallModel call) {
+            PreferenceManager preferenceManager = new PreferenceManager(itemView.getContext());
+            username.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)));
+
+            if (call.user != null) {
                 username.setText(call.user.name);
                 image_user.setImageBitmap(getUserImage(call.user.image));
-                if (call.incoming){
+                if (call.incoming) {
                     typecall.setText("Incoming call");
                 } else {
                     typecall.setText("Outgoing call");
                 }
             }
 
-            if (call.type.equals("audio")){
+            if (call.type.equals("audio")) {
                 image_type_call.setImageResource(R.drawable.ic_call);
                 image_type_call.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -83,10 +87,10 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
 
     }
 
-    private Bitmap getUserImage(String encodedImage){
-        if (encodedImage != null){
+    private Bitmap getUserImage(String encodedImage) {
+        if (encodedImage != null) {
             byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
         return null;
     }
@@ -95,7 +99,7 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
     @Override
     public CallViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new CallViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.user_call_layaout, parent,false)
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.user_call_layaout, parent, false)
         );
     }
 

@@ -6,13 +6,9 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.heychat.databinding.ItemContainerReceivedMessageBinding;
 import com.example.heychat.databinding.ItemContainerReceivedMessagePrivateBinding;
-import com.example.heychat.databinding.ItemContainerSentMessageBinding;
 import com.example.heychat.databinding.ItemContainerSentMessagePrivateBinding;
 import com.example.heychat.listeners.MessageListener;
 import com.example.heychat.models.ChatMessage;
@@ -98,21 +94,22 @@ public class PrivateChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return VIEW_TYPE_RECEIVED;
     }
 
-    static class SentMessageViewHolder extends RecyclerView.ViewHolder {
+    class SentMessageViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemContainerSentMessagePrivateBinding binding;
 
         SentMessageViewHolder(ItemContainerSentMessagePrivateBinding itemContainerSentMessageBinding) {
             super(itemContainerSentMessageBinding.getRoot());
             binding = itemContainerSentMessageBinding;
-
+            binding.layoutMessage.setOnClickListener(view -> messageListener.onMessageSelection(chatMessages.get(getAdapterPosition()).isSelected,
+                    getAdapterPosition(), chatMessages, chatMessages.get(getAdapterPosition())));
         }
 
         void setTextData(ChatMessage chatMessage) {
             binding.textMessage.setText(chatMessage.message);
             binding.textMessage.setVisibility(ViewGroup.VISIBLE);
             binding.textDateTime.setText(chatMessage.dateTime);
-
+            binding.textDateTime.setVisibility(View.GONE);
         }
 
         void setImageData(ChatMessage chatMessage) {
@@ -136,18 +133,8 @@ public class PrivateChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ReceivedMessageViewHolder(ItemContainerReceivedMessagePrivateBinding itemContainerReceivedMessageBinding) {
             super(itemContainerReceivedMessageBinding.getRoot());
             binding = itemContainerReceivedMessageBinding;
-            itemView.setOnClickListener(view -> {
-                if (messageListener != null){
-                    int pos = getAdapterPosition();
-                    chatMessages.get(pos).isSelected = !chatMessages.get(pos).isSelected;
-                    if (!chatMessages.get(pos).isSelected){
-                        binding.txtTranslate.setVisibility(View.GONE);
-                    } else{
-                        binding.txtTranslate.setVisibility(View.VISIBLE);
-                    }
-                    messageListener.onMessageSelection(chatMessages.get(pos).isSelected, pos, chatMessages, chatMessages.get(pos));
-                }
-            });
+            binding.layoutMessage.setOnClickListener(view -> messageListener.onMessageSelection(chatMessages.get(getAdapterPosition()).isSelected,
+                    getAdapterPosition(), chatMessages, chatMessages.get(getAdapterPosition())));
         }
 
         void setTextData(ChatMessage chatMessage, Bitmap receiverProfileImage) {
@@ -162,6 +149,7 @@ public class PrivateChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             binding.imageMessage.setImageBitmap(getUserImage(chatMessage.message));
             binding.imageMessage.setVisibility(View.VISIBLE);
             binding.textDateTime.setText(chatMessage.dateTime);
+            binding.textDateTime.setVisibility(View.GONE);
 
         }
 

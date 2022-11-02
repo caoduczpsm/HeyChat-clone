@@ -18,11 +18,13 @@
         android:paddingBottom="@dimen/_8sdp"
         app:layout_constraintWidth_max="wrap"
         app:layout_constraintHeight_max="wrap"
+        app:layout_constraintWidth_percent="0.8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.8">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/downBtn"
             android:id="@+id/textMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,6 +38,16 @@
             android:id="@+id/imageMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_marginRight="@dimen/_3sdp"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:id="@+id/downBtn"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/ic_down"/>
+
     </RelativeLayout>
 
     <TextView

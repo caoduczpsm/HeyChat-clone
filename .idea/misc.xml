@@ -12,6 +12,7 @@
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_input.xml" value="0.148" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_profile.xml" value="0.148" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_received_message.xml" value="0.167" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_search_edt.xml" value="0.153" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_select.xml" value="0.148" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_sent_message.xml" value="0.167" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/background_tabs.xml" value="0.148" />
@@ -22,6 +23,8 @@
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/ic_group_add.xml" value="0.167" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/ic_search.xml" value="0.121" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/round_border.xml" value="0.167" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/slashprivatescreen.xml" value="0.153" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/splashmainscreen.xml" value="0.153" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/tab_background_selector.xml" value="0.166" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/tab_selected_backgroud.xml" value="0.166" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/drawable/user_selection_background.xml" value="0.167" />
@@ -33,117 +36,88 @@
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_demo.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_group.xml" value="0.264" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_incoming_invitation.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_info_group.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_main2.xml" value="0.264" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_outgoing_invitation.xml" value="0.264" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_private_chat.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_send_otpactivity.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_set_info_group.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_sign_in.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_slash_main_screen.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_slash_private_screen.xml" value="0.1" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_users.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_verify_otpactivity.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/activity_video_call.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/card.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/card_layout.xml" value="0.24895833333333334" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_config.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_contacts.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_groups.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_profile.xml" value="0.23148148148148148" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/fragment_video_call.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_received_message.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_received_message_group.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_received_message_private.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_recent_conversion.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_sent_message.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_sent_message_private.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_user.xml" value="0.2359375" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/item_container_user_selection.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_detail_message_dialog.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_add_group_member.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_block_screenshot.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_change_team_leader.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_delete_group_member.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_edit_prifile.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_edit_profile.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_group_member.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_language.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_logout.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_message_selection.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_private_account.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_dialog_textsize.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/layout_temp.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/spinner_item.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/tab_title.xml" value="0.25" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/tablayout_custom.xml" value="0.24895833333333334" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/user_call_layaout.xml" value="0.264" />
         <entry key="..\:/NLNGanh/App/HeyChat/app/src/main/res/layout/users_online_layout.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/drawable-v24/ic_arrow.xml" value="0.1605" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/drawable/background_received_message.xml" value="0.1605" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/activity_translate.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/item_container_received_message.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/item_container_received_message_group.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/layout_dialog_edit_profile.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/layout_dialog_translate.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/layout/spinner_item.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/HeyChat/app/src/main/res/xml/remote_config_defaults.xml" value="0.25" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable-v24/background_button.xml" value="0.1985" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.221" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/backgroud_icon.xml" value="0.1" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/backgroud_text_seen_message.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_chat_input.xml" value="0.1" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_content_bottom.xml" value="0.1" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_content_top.xml" value="0.1" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_dialog.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_image.xml" value="0.1" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_infogroup.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_input.xml" value="0.1" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_new_message.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_profile.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_received_message.xml" value="0.1" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_search_edt.xml" value="0.221" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_sent_message.xml" value="0.1" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_text_seen_message.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/background_translate.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_check_circle.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_copy.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_delete.xml" value="0.1565" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_delete_message.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_info.xml" value="0.221" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_launcher_background.xml" value="0.221" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_lock.xml" value="0.221" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_multiple_selection_message.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_person.xml" value="0.221" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/ic_translate.xml" value="0.1565" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/round_border.xml" value="0.221" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/drawable/wave.xml" value="0.221" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_chat.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_chat_group.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_conversation_group.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_create_group.xml" value="0.25" />
+        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_chat.xml" value="0.1" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_demo.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_group_member.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_in_fo_group.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_info_group.xml" value="0.264" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_main.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_main2.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_private_chat.xml" value="0.25" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_send_otpactivity.xml" value="0.2359375" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_set_info_group.xml" value="0.25" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_users.xml" value="0.264" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/activity_verify_otpactivity.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/fragment_config.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/fragment_home.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_received_message.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_received_message_group.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_received_message_private.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_recent_conversion.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_sent_message.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_sent_message_private.xml" value="0.24895833333333334" />
+        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_received_message.xml" value="0.12082066869300911" />
+        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_recent_conversion.xml" value="0.1" />
+        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_sent_message.xml" value="0.1" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/item_container_user.xml" value="0.264" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_add_group_member.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_change_team_leader.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_delete_group_member.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_edit_profile.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_group_member.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_logout.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_message_selection.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/layout_dialog_private_account.xml" value="0.24895833333333334" />
         <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/round_border.xml" value="0.25" />
-        <entry key="..\:/Users/DucNC/AndroidStudioProjects/HeyChat/app/src/main/res/layout/temp.xml" value="0.2" />
       </map>
     </option>
   </component>

@@ -1,5 +1,6 @@
 package com.example.heychat.fragments;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,11 +29,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -169,31 +173,66 @@ public class VideoCallFragment extends Fragment implements CallListener {
 
     @Override
     public void initiateVideoCall(User user) {
-        if (user.token == null || user.token.trim().isEmpty()) {
-            Toast.makeText(getContext(), user.name + "is not available for video call", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
-            intent.putExtra("user", user);
-            intent.putExtra("type", "video");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-        }
+
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                if (user.token == null || user.token.trim().isEmpty()) {
+                    Toast.makeText(getContext(), user.name + "is not available for video call", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
+                    intent.putExtra("user", user);
+                    intent.putExtra("type", "video");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(getContext(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE)
+                .check();
+
+
     }
 
     @Override
     public void initiateAudioCall(User user) {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                if (user.token == null || user.token.trim().isEmpty()) {
+                    Toast.makeText(getContext(), user.name + "is not available for audio call", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
+                    intent.putExtra("user", user);
+                    intent.putExtra("type", "audio");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+            }
 
-        if (user.token == null || user.token.trim().isEmpty()) {
-            Toast.makeText(getContext(), user.name + "is not available for audio call", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(getContext(), OutgoingInvitationActivity.class);
-            intent.putExtra("user", user);
-            intent.putExtra("type", "audio");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(getContext(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
 
-        }
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE)
+                .check();
+
     }
+
 }

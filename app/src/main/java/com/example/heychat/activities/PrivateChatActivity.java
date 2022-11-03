@@ -7,13 +7,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -34,9 +37,11 @@ import com.example.heychat.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.mlkit.nl.translate.TranslateLanguage;
@@ -68,6 +73,8 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
     private RecyclerView chatRecyclerView;
     private EditText inputMessage;
     private CardView layoutSend;
+    private ProgressDialog pd;
+    private ListenerRegistration listenerRegistration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,23 +91,21 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         layoutSend.setOnClickListener(v -> sendMessage());
 
         imageBack.setOnClickListener(view -> {
-
             deleteData();
-
             preferenceManager.remove(Constants.KEY_COLLECTION_ROOM);
-
             showToast("Delete All Message Successfully");
-            Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            finish();
         });
     }
 
     private void deleteData() {
-        database.collection(Constants.KEY_COLLECTION_ROOM)
-                .document(roomChat.id)
-                .delete();
-
+        listenerRegistration.remove();
+        removelistenMessages();
+        if (listenerRegistration == null) {
+            Log.d("roomAmout", "listenerRegistration null");
+        }
+        chatMessages.clear();
+        chatAdapter.notifyDataSetChanged();
         database.collection(Constants.KEY_COLLECTION_ROOM)
                 .document(roomChat.id)
                 .collection(Constants.KEY_ROOM_MEMBER)
@@ -115,16 +120,8 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
                     }
                 });
         database.collection(Constants.KEY_COLLECTION_ROOM)
-                .get()
-                .addOnCompleteListener(task -> {
-                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                        if (Integer.parseInt(String.valueOf(queryDocumentSnapshot.get(Constants.KEY_AMOUNT_OF_ROOM))) == 0) {
-                            database.collection(Constants.KEY_COLLECTION_ROOM)
-                                    .document(queryDocumentSnapshot.getId())
-                                    .delete();
-                        }
-                    }
-                });
+                .document(roomChat.id)
+                .delete();
 
         database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, roomChat.id)
@@ -136,6 +133,19 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
                                 .delete();
                     }
                 });
+        preferenceManager.remove(Constants.KEY_COLLECTION_ROOM);
+
+//        database.collection(Constants.KEY_COLLECTION_ROOM)
+//                .get()
+//                .addOnCompleteListener(task -> {
+//                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+//                        if (Integer.parseInt(String.valueOf(queryDocumentSnapshot.get(Constants.KEY_AMOUNT_OF_ROOM))) == 0) {
+//                            database.collection(Constants.KEY_COLLECTION_ROOM)
+//                                    .document(queryDocumentSnapshot.getId())
+//                                    .delete();
+//                        }
+//                    }
+//                });
     }
 
     private void init() {
@@ -148,7 +158,20 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         layoutSend = findViewById(R.id.layoutSend);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-
+        pd = new ProgressDialog(this);
+        pd.setMessage("Wait...");
+        pd.setCancelable(false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                pd.dismiss();//dismiss dialog
+                deleteData();
+                finish();
+            }
+        });
+        pd.show();
+        listenerRegistration = database.collection(Constants.KEY_COLLECTION_ROOM).document(roomChat.id)
+                .addSnapshotListener(roomListener);
 
         chatMessages = new ArrayList<>();
         chatAdapter = new PrivateChatAdapter(
@@ -162,60 +185,59 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
 
     }
 
+    private final EventListener<DocumentSnapshot> roomListener = (value, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (value != null) {
+            String amount = value.getString(Constants.KEY_AMOUNT_OF_ROOM);
+            if (amount == null) {
+                deleteData();
+                listenerRegistration.remove();
+                Log.d("roomAmout", "null");
+                listenerRegistration = null;
+                if (listenerRegistration == null) {
+                    Log.d("roomAmout", "listenerRegistration null");
+                }
+                createRoomChat();
+                return;
+            } else {
+                Log.d("roomAmout", amount);
+                if (amount.equals("1")) {
+                    pd.show();
+                } else if (amount.equals("2")) {
+                    pd.dismiss();
+                }
+            }
+        }
+    };
+
     private void sendMessage() {
-        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
-                .document(roomChat.id)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot documentSnapshot = task.getResult();
-
-                        if (!inputMessage.getText().toString().equals("")) {
-                            HashMap<String, Object> message = new HashMap<>();
-                            message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-                            message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
-                            message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
-                            message.put(Constants.KEY_TIMESTAMP, new Date());
-                            database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
-                            try {
-                                JSONArray tokens = new JSONArray();
-                                tokens.put(preferenceManager.getString(Constants.KEY_COLLECTION_ROOM));
-
-                                JSONObject data = new JSONObject();
-                                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-                                data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
-                                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                                data.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
-
-                                JSONObject body = new JSONObject();
-                                body.put(Constants.REMOTE_MSG_DATA, data);
-                                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-
-//                sendNotification(body.toString());
-
-                            } catch (Exception e) {
-                                //showToast(e.getMessage());
-                            }
-                        }
-
-                    }
-                });
-
+        HashMap<String, Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_RECEIVER_ID, roomChat.id);
+        message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
+        message.put(Constants.KEY_TIMESTAMP, new Date());
+        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT).add(message);
         inputMessage.setText(null);
     }
 
     private void listenMessages() {
-
         database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, roomChat.id)
                 .addSnapshotListener(eventListener);
-
-
         database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, roomChat.id)
                 .addSnapshotListener(eventListener);
+    }
 
+    private void removelistenMessages(){
+        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, roomChat.id)
+                .addSnapshotListener(eventListener).remove();
+        database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, roomChat.id)
+                .addSnapshotListener(eventListener).remove();
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -235,10 +257,11 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
                     chatMessage.dataObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     chatMessages.add(chatMessage);
                 }
+
             }
 
             Collections.sort(chatMessages, (obj1, obj2) -> obj1.dataObject.compareTo(obj2.dataObject));
-            if (count == 0) {
+            if (chatMessages.size() == 0) {
                 chatAdapter.notifyDataSetChanged();
             } else {
                 chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
@@ -345,6 +368,66 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         dialog.show();
     }
 
+    private void createRoomChat() {
+        roomChat = new RoomChat();
+        database.collection(Constants.KEY_COLLECTION_ROOM)
+                .get()
+                .addOnCompleteListener(task -> {
+                    Boolean isExist = false;
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                        if (Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "1")) {
+                            HashMap<String, Object> room = new HashMap<>();
+                            room.put(Constants.KEY_AMOUNT_OF_ROOM, "2");
+                            HashMap<String, Object> member = new HashMap<>();
+                            member.put(Constants.KEY_ROOM_MEMBER, preferenceManager.getString(Constants.KEY_USER_ID));
+                            database.collection(Constants.KEY_COLLECTION_ROOM)
+                                    .document(queryDocumentSnapshot.getId())
+                                    .update(room);
+                            database.collection(Constants.KEY_COLLECTION_ROOM)
+                                    .document(queryDocumentSnapshot.getId())
+                                    .collection(Constants.KEY_ROOM_MEMBER)
+                                    .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                    .set(member);
+                            preferenceManager.putString(Constants.KEY_COLLECTION_ROOM, queryDocumentSnapshot.getId());
+                            roomChat.id = queryDocumentSnapshot.getId();
+                            listenerRegistration = database.collection(Constants.KEY_COLLECTION_ROOM).document(roomChat.id).addSnapshotListener(roomListener);
+                            listenMessages();
+                            isExist = true;
+                            break;
+                        } else if (Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "2")) {
+                            isExist = false;
+                        }
+                    }
+                    if (!isExist) {
+                        HashMap<String, Object> room = new HashMap<>();
+                        room.put(Constants.KEY_AMOUNT_OF_ROOM, "1");
+                        HashMap<String, Object> member = new HashMap<>();
+                        member.put(Constants.KEY_ROOM_MEMBER, preferenceManager.getString(Constants.KEY_USER_ID));
+
+                        database.collection(Constants.KEY_COLLECTION_ROOM)
+                                .add(room)
+                                .addOnCompleteListener(task1 -> {
+                                    DocumentReference documentReference = task1.getResult();
+
+                                    preferenceManager.putString(Constants.KEY_COLLECTION_ROOM, task1.getResult().getId());
+                                    database.collection(Constants.KEY_COLLECTION_ROOM)
+                                            .document(documentReference.getId())
+                                            .collection(Constants.KEY_ROOM_MEMBER)
+                                            .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                            .set(member);
+
+                                    roomChat.id = task1.getResult().getId();
+                                    pd.show();
+                                    listenerRegistration = database.collection(Constants.KEY_COLLECTION_ROOM).document(roomChat.id).addSnapshotListener(roomListener);
+                                    listenMessages();
+                                });
+                    }
+                });
+        roomChat.id = preferenceManager.getString(Constants.KEY_COLLECTION_ROOM);
+//        Log.d("roomAmout", "roomChat "+roomChat.id);
+//        listenerRegistration = database.collection(Constants.KEY_COLLECTION_ROOM).document(roomChat.id).addSnapshotListener(roomListener);
+    }
+
     private void updateDataOnFB(String key) {
         database.collection(Constants.KEY_COLLECTION_PRIVATE_CHAT)
                 .document(key)
@@ -373,6 +456,11 @@ public class PrivateChatActivity extends BaseActivity implements MessageListener
         return dialog;
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        listenerRegistration.remove();
+    }
 
     @Override
     public void finishActivity(int requestCode) {

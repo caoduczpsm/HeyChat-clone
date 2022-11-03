@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -343,7 +344,7 @@ public class ChatGroupBottomSheetFragment extends BottomSheetDialogFragment impl
         });
         layoutSend.setOnClickListener(v -> sendMessage(inputeMessage.getText().toString()));
         layoutImage.setOnClickListener(v -> requestImagePermission());
-        layoutAttact.setOnClickListener(v->requestFilePermission());
+        layoutAttact.setOnClickListener(v -> requestFilePermission());
 
         textSuggestion1.setOnClickListener(view -> {
             sendMessage(textSuggestion1.getText().toString());
@@ -789,11 +790,28 @@ public class ChatGroupBottomSheetFragment extends BottomSheetDialogFragment impl
         RelativeLayout layoutCopy = dialog.findViewById(R.id.relativeLayoutCopy);
         RelativeLayout layoutDetail = dialog.findViewById(R.id.relativeLayoutDetail);
         RelativeLayout layoutDelete = dialog.findViewById(R.id.relativeLayoutDelete);
+        ConstraintLayout layoutMessage = dialog.findViewById(R.id.layout_message);
         ImageView imageCheck = dialog.findViewById(R.id.imageCheck);
         ImageView imageTranslate = dialog.findViewById(R.id.imageTranslate);
+        ImageView imageMessage = dialog.findViewById(R.id.imageMessage);
 
+        if (chatMessage.type.equals("text")) {
+            textMessage.setVisibility(View.VISIBLE);
+            textMessage.setText(lastMessages.get(position).message);
+        } else if (chatMessage.type.equals(Constants.MESSAGE_IMAGE)) {
+            layoutMessage.setBackground(null);
+            textMessage.setVisibility(View.GONE);
+            imageMessage.setVisibility(View.VISIBLE);
+            imageMessage.setImageBitmap(getBitmapFromEncodedString(lastMessages.get(position).message));
+        } else {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(lastMessages.get(position).message);
+            String fileName = storageReference.getName().toString();
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String name = fileName.split("--__")[0];
+            textMessage.setText(name + "." + extension);
+            textMessage.setVisibility(ViewGroup.VISIBLE);
+        }
 
-        textMessage.setText(lastMessages.get(position).message);
         textDateTime.setText(lastMessages.get(position).dateTime);
         if (lastMessages.get(position).isSeen) {
             textSeenMessage.setText("Seen");

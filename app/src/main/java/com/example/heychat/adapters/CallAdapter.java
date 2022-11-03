@@ -1,6 +1,7 @@
 package com.example.heychat.adapters;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,8 @@ import com.example.heychat.listeners.CallListener;
 import com.example.heychat.models.CallModel;
 import com.example.heychat.ultilities.Constants;
 import com.example.heychat.ultilities.PreferenceManager;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,4 +116,5 @@ public class CallAdapter extends RecyclerView.Adapter<CallAdapter.CallViewHolder
     public int getItemCount() {
         return calls.size();
     }
+
 }

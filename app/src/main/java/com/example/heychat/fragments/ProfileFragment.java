@@ -26,9 +26,11 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+
 import com.example.heychat.R;
 import com.example.heychat.activities.MainActivity2;
 import com.example.heychat.activities.PrivateChatActivity;
@@ -42,6 +44,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -58,9 +61,8 @@ public class ProfileFragment extends Fragment {
     private String encodedImage;
     private FirebaseFirestore database;
     private String userId;
-    private RoomChat roomChat;
-    private Intent intent;
     private int textSize = 0;
+    private RoomChat roomChat;
 
     public ProfileFragment() {
 
@@ -80,17 +82,8 @@ public class ProfileFragment extends Fragment {
         if (getContext() != null) {
             preferenceManager = new PreferenceManager(getContext());
         }
-        roomChat = new RoomChat();
         preferenceManager.remove(Constants.KEY_COLLECTION_ROOM);
-
         HashMap<String, Object> room = new HashMap<>();
-        room.put(Constants.KEY_AMOUNT_OF_ROOM, "0");
-        room.put(Constants.KEY_ROOM_MEMBER, "");
-        database.collection(Constants.KEY_COLLECTION_ROOM).add(room);
-
-        intent = new Intent(getContext(), PrivateChatActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         loadUserDetail();
 
         View log_out_btn = view.findViewById(R.id.log_out_btn);
@@ -102,7 +95,7 @@ public class ProfileFragment extends Fragment {
         edit_profile.setOnClickListener(v -> editProfile());
         log_out_btn.setOnClickListener(v -> logout());
         change_language_btn.setOnClickListener(v -> changeLanguage());
-        change_text_size.setOnClickListener(v-> changeTextSize());
+        change_text_size.setOnClickListener(v -> changeTextSize());
 
         layoutPrivateAccount.setOnClickListener(view1 -> {
             database.collection(Constants.KEY_COLLECTION_USER)
@@ -125,16 +118,16 @@ public class ProfileFragment extends Fragment {
             Button yes_btn = dialog.findViewById(R.id.yes_btn);
             Button no_btn = dialog.findViewById(R.id.no_btn);
 
-            if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("unblock")){
+            if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("unblock")) {
                 switch_block.setChecked(false);
                 switch_block.setText("Unlock");
-            }else if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("block")){
+            } else if (preferenceManager.getString(Constants.KEY_BLOCK_SCREENSHOT).equals("block")) {
                 switch_block.setChecked(true);
                 switch_block.setText("Block");
             }
 
             switch_block.setOnClickListener(view15 -> {
-                if (switch_block.isChecked()){
+                if (switch_block.isChecked()) {
                     switch_block.setText("Block");
                 } else {
                     switch_block.setText("Unblock");
@@ -142,7 +135,7 @@ public class ProfileFragment extends Fragment {
             });
 
             yes_btn.setOnClickListener(view14 -> {
-                if (switch_block.isChecked()){
+                if (switch_block.isChecked()) {
                     showToast("Disable screen shot");
                     preferenceManager.putString(Constants.KEY_BLOCK_SCREENSHOT, "block");
                     HashMap<String, Object> blockShot = new HashMap<>();
@@ -201,17 +194,19 @@ public class ProfileFragment extends Fragment {
     }
 
     private void createRoomChat() {
+        roomChat = new RoomChat();
         database.collection(Constants.KEY_COLLECTION_ROOM)
                 .get()
                 .addOnCompleteListener(task -> {
+                    Boolean isExist = false;
                     for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                         if (Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "1")) {
 
                             HashMap<String, Object> room = new HashMap<>();
+
                             room.put(Constants.KEY_AMOUNT_OF_ROOM, "2");
                             HashMap<String, Object> member = new HashMap<>();
                             member.put(Constants.KEY_ROOM_MEMBER, preferenceManager.getString(Constants.KEY_USER_ID));
-
                             database.collection(Constants.KEY_COLLECTION_ROOM)
                                     .document(queryDocumentSnapshot.getId())
                                     .update(room);
@@ -220,41 +215,43 @@ public class ProfileFragment extends Fragment {
                                     .collection(Constants.KEY_ROOM_MEMBER)
                                     .document(preferenceManager.getString(Constants.KEY_USER_ID))
                                     .set(member);
-
-                            roomChat.id = queryDocumentSnapshot.getId();
                             preferenceManager.putString(Constants.KEY_COLLECTION_ROOM, queryDocumentSnapshot.getId());
+                            roomChat.id = queryDocumentSnapshot.getId();
+                            Intent intent = new Intent(getContext(), PrivateChatActivity.class);
                             intent.putExtra(Constants.KEY_COLLECTION_ROOM, roomChat);
                             startActivity(intent);
 
+                            isExist = true;
                             break;
-                        } else if (Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "2") || Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "0")) {
-
-                            HashMap<String, Object> room = new HashMap<>();
-                            room.put(Constants.KEY_AMOUNT_OF_ROOM, "1");
-                            HashMap<String, Object> member = new HashMap<>();
-                            member.put(Constants.KEY_ROOM_MEMBER, preferenceManager.getString(Constants.KEY_USER_ID));
-
-                            database.collection(Constants.KEY_COLLECTION_ROOM)
-                                    .add(room)
-                                    .addOnCompleteListener(task1 -> {
-                                        DocumentReference documentReference = task1.getResult();
-                                        roomChat.id = documentReference.getId();
-                                        intent.putExtra(Constants.KEY_COLLECTION_ROOM, roomChat);
-                                        startActivity(intent);
-                                        preferenceManager.putString(Constants.KEY_COLLECTION_ROOM, queryDocumentSnapshot.getId());
-                                        database.collection(Constants.KEY_COLLECTION_ROOM)
-                                                .document(documentReference.getId())
-                                                .collection(Constants.KEY_ROOM_MEMBER)
-                                                .document(preferenceManager.getString(Constants.KEY_USER_ID))
-                                                .set(member);
-
-                                    });
-                            break;
+                        } else if (Objects.equals(queryDocumentSnapshot.getString(Constants.KEY_AMOUNT_OF_ROOM), "2")) {
+                            isExist = false;
                         }
                     }
+                    if (!isExist) {
+                        HashMap<String, Object> room = new HashMap<>();
+                        room.put(Constants.KEY_AMOUNT_OF_ROOM, "1");
+                        HashMap<String, Object> member = new HashMap<>();
+                        member.put(Constants.KEY_ROOM_MEMBER, preferenceManager.getString(Constants.KEY_USER_ID));
+
+                        database.collection(Constants.KEY_COLLECTION_ROOM)
+                                .add(room)
+                                .addOnCompleteListener(task1 -> {
+                                    DocumentReference documentReference = task1.getResult();
+
+                                    preferenceManager.putString(Constants.KEY_COLLECTION_ROOM, task1.getResult().getId());
+                                    database.collection(Constants.KEY_COLLECTION_ROOM)
+                                            .document(documentReference.getId())
+                                            .collection(Constants.KEY_ROOM_MEMBER)
+                                            .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                            .set(member);
+
+                                    roomChat.id = task1.getResult().getId();
+                                    Intent intent = new Intent(getContext(), PrivateChatActivity.class);
+                                    intent.putExtra(Constants.KEY_COLLECTION_ROOM, roomChat);
+                                    startActivity(intent);
+                                });
+                    }
                 });
-
-
     }
 
     private void editProfile() {
@@ -341,11 +338,11 @@ public class ProfileFragment extends Fragment {
         Button yes_btn = dialog.findViewById(R.id.yes_btn);
         Button no_btn = dialog.findViewById(R.id.no_btn);
 
-        if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "14")){
+        if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "14")) {
             size.setProgress(0);
-        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "18")){
+        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "18")) {
             size.setProgress(1);
-        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "24")){
+        } else if (Objects.equals(preferenceManager.getString(Constants.KEY_TEXTSIZE), "24")) {
             size.setProgress(2);
         } else {
             size.setProgress(3);
@@ -385,15 +382,15 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    public int getSize(int i){
+    public int getSize(int i) {
         int s = 0;
-        if(i==0) {
-            s =14;
-        }else if(i==1){
+        if (i == 0) {
+            s = 14;
+        } else if (i == 1) {
             s = 18;
-        }else if(i==2){
+        } else if (i == 2) {
             s = 24;
-        }else if(i==3){
+        } else if (i == 3) {
             s = 30;
         }
         return s;
@@ -406,7 +403,7 @@ public class ProfileFragment extends Fragment {
         Button yes_btn = dialog.findViewById(R.id.yes_btn);
         Button no_btn = dialog.findViewById(R.id.no_btn);
 
-        if(preferenceManager.getString(Constants.KEY_LANGUAGE) == null){
+        if (preferenceManager.getString(Constants.KEY_LANGUAGE) == null) {
             preferenceManager.putString(Constants.KEY_LANGUAGE, "VI");
         }
 

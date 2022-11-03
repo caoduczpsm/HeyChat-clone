@@ -83,9 +83,7 @@ public class SetInfoGroupActivity extends AppCompatActivity {
                                                 .document(documentReference.getId())
                                                 .set(id)
                                                 .addOnSuccessListener(aVoid1 -> {
-                                                    Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
-                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                    startActivity(intent);
+                                                    finish();
                                                 })
                                                 .addOnFailureListener(e -> {
 

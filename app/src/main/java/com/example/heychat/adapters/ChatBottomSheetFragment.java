@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -232,8 +233,8 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
             }
         });
 
-        videoCall.setOnClickListener(v -> initiateVideoCall(receiverUser));
-        audioCall.setOnClickListener(v -> initiateAudioCall(receiverUser));
+        videoCall.setOnClickListener(v -> requestPermission("video"));
+        audioCall.setOnClickListener(v -> requestPermission("audio"));
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -846,6 +847,7 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
         ConstraintLayout layoutMessage = dialog.findViewById(R.id.layout_message);
         ImageView imageCheck = dialog.findViewById(R.id.imageCheck);
         ImageView imageTranslate = dialog.findViewById(R.id.imageTranslate);
+        ImageView imageMessage = dialog.findViewById(R.id.imageMessage);
 
         if (chatMessage.type.equals("text")) {
             layoutMessage.setVisibility(View.VISIBLE);
@@ -854,8 +856,18 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
         if (chatMessage.type.equals("text")) {
             textMessage.setVisibility(View.VISIBLE);
             textMessage.setText(lastMessages.get(position).message);
-        } else {
+        } else if (chatMessage.type.equals(Constants.MESSAGE_IMAGE)) {
+            layoutMessage.setBackground(null);
             textMessage.setVisibility(View.GONE);
+            imageMessage.setVisibility(View.VISIBLE);
+            imageMessage.setImageBitmap(getBitmapFromEncodedString(lastMessages.get(position).message));
+        } else {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(lastMessages.get(position).message);
+            String fileName = storageReference.getName().toString();
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String name = fileName.split("--__")[0];
+            textMessage.setText(name + "." + extension);
+            textMessage.setVisibility(ViewGroup.VISIBLE);
         }
 
         textDateTime.setText(lastMessages.get(position).dateTime);
@@ -1039,5 +1051,30 @@ public class ChatBottomSheetFragment extends BottomSheetDialogFragment implement
 
         }
     }
+
+    private void requestPermission(String type){
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                if (type.equals("audio")){
+                    initiateAudioCall(receiverUser);
+                } else {
+                    initiateVideoCall(receiverUser);
+                }
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(getContext(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE)
+                .check();
+    }
+
 
 }

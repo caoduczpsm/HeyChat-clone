@@ -274,32 +274,40 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
     @SuppressLint("NotifyDataSetChanged")
     private void getUsers(String type) {
         if (type.equals("add")) {
-
-            database.collection(Constants.KEY_COLLECTION_USER)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            users.clear();
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                for (int i = 0; i < contactList.size(); i++) {
-                                    if (contactList.get(i).equals(queryDocumentSnapshot.getString(Constants.KEY_EMAIL))) {
-                                        User user = new User();
-                                        user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
-                                        user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
-                                        user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
-                                        user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                                        user.id = queryDocumentSnapshot.getId();
-                                        users.add(user);
-                                    }
-                                    addGroupSelectionAdapter.notifyDataSetChanged();
-                                }
-                            }
-
+            database.collection(Constants.KEY_COLLECTION_GROUP).document(group.id).collection(Constants.KEY_GROUP_MEMBER)
+                    .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        ArrayList<String> member = new ArrayList<>();
+                        for (QueryDocumentSnapshot qr: queryDocumentSnapshots){
+                            member.add(qr.getId());
                         }
+                        database.collection(Constants.KEY_COLLECTION_USER)
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful() && task.getResult() != null) {
+                                        users.clear();
+                                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                            for (int i = 0; i < contactList.size(); i++) {
+                                                if (contactList.get(i).equals(queryDocumentSnapshot.getString(Constants.KEY_EMAIL)) && !member.contains(queryDocumentSnapshot.getId())) {
+                                                    User user = new User();
+                                                    user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
+                                                    user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
+                                                    user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
+                                                    user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                                                    user.id = queryDocumentSnapshot.getId();
+                                                    users.add(user);
+                                                }
+                                                addGroupSelectionAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+
+                                    }
+                                });
                     });
+
         } else {
             for (int i = 0; i < groupMember.size(); i++) {
-                Log.d("CCC", groupMember.get(i));
+//                Log.d("CCC", groupMember.get(i));
+                users.clear();
                 database.collection(Constants.KEY_COLLECTION_USER)
                         .document(groupMember.get(i))
                         .get()

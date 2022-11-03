@@ -92,7 +92,8 @@
         </activity>
         <activity
             android:name=".activities.SignInActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"/>
 
         <service
             android:name=".firebase.MessagingService"

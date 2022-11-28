@@ -518,7 +518,7 @@ public class ProfileFragment extends Fragment {
         Button yes_btn = dialog.findViewById(R.id.yes_btn);
         Button no_btn = dialog.findViewById(R.id.no_btn);
 
-        yes_btn.setOnClickListener(v -> signOut());
+        yes_btn.setOnClickListener(v -> signOut(dialog));
         no_btn.setOnClickListener(view -> dialog.dismiss());
         dialog.show();
     }
@@ -543,7 +543,8 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void signOut() {
+    private void signOut(Dialog dialog) {
+        dialog.dismiss();
         showToast(getString(R.string.Signing_out));
 
         DocumentReference documentReference = database.collection(Constants.KEY_COLLECTION_USER).document(

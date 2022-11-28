@@ -248,9 +248,9 @@ public class VideoCallActivity extends BaseSinchActivity {
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
             AudioController audioController = getSinchServiceInterface().getAudioController();
             audioController.enableSpeaker();
-//            AudioManager audioManager = (AudioManager) getSystemService(getApplication().AUDIO_SERVICE);
-//            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-//            audioManager.setSpeakerphoneOn(true);
+            AudioManager audioManager = (AudioManager) getSystemService(getApplication().AUDIO_SERVICE);
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.setSpeakerphoneOn(true);
 
             mCallStart = System.currentTimeMillis();
             Log.d(TAG, "Call offered video: " + call.getDetails().isVideoOffered());

@@ -185,7 +185,7 @@ public class ConfigFragment extends Fragment implements UserListener{
                         if(task.isSuccessful() && task.getResult() != null){
                             List<User> users = new ArrayList<>();
                             for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
-                                if(currentUserId.equals(queryDocumentSnapshot.getId())){
+                                if(currentUserId != null && queryDocumentSnapshot.exists() && currentUserId.equals(queryDocumentSnapshot.getId())){
                                     continue;
                                 }
                                 for (int i = 0; i < contactList.size(); i++){

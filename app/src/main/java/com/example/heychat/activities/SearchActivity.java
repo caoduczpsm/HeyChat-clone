@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.heychat.R;
 import com.example.heychat.adapters.ChatBottomSheetFragment;
+import com.example.heychat.adapters.ChatGroupBottomSheetFragment;
 import com.example.heychat.adapters.GroupAdapter;
 import com.example.heychat.adapters.UsersAdapter;
 import com.example.heychat.databinding.ActivitySearchBinding;
@@ -64,27 +65,31 @@ public class SearchActivity extends AppCompatActivity implements UserListener, G
                     if (task.isSuccessful() && task.getResult() != null) {
                         groups.clear();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                            if (queryDocumentSnapshot.getString(Constants.KEY_GROUP_NAME).contains(searchText) && !searchText.isEmpty()) {
-
+                            if (queryDocumentSnapshot.getString(Constants.KEY_GROUP_NAME).contains(searchText) && !searchText.isEmpty() && searchText != "") {
+                                Log.d("SearchTAG", queryDocumentSnapshot.getId());
                                 Group group = new Group();
                                 group.name = queryDocumentSnapshot.getString(Constants.KEY_GROUP_NAME);
                                 group.image = queryDocumentSnapshot.getString(Constants.KEY_GROUP_IMAGE);
 //                                group.token = queryDocumentSnapshot.getString(Constants.KEY_GROUP_OWNER);
                                 group.id = queryDocumentSnapshot.getId();
-                                database.collection(Constants.KEY_COLLECTION_GROUP).document(group.id).collection(Constants.KEY_GROUP_MEMBER)
-                                        .document(preferenceManager.getString(Constants.KEY_USER_ID)).get().addOnSuccessListener(documentSnapshot -> {
-                                            if (documentSnapshot.exists()){
-                                                groups.add(group);
-                                                groupAdapter.notifyDataSetChanged();
-                                                binding.textErrorMessage.setVisibility(View.GONE);
-                                                if (groups.size() <= 0) {
-                                                    showErrorMessage();
-                                                }
-                                            }
-                                        });
-//                                groups.add(group);
+                                groups.add(group);
                             }
+
                         }
+                        for (Group group: groups){
+                            database.collection(Constants.KEY_COLLECTION_USER).document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                    .collection(Constants.KEY_GROUP_ID).document(group.id).get().addOnSuccessListener(documentSnapshot -> {
+                                        if (!documentSnapshot.exists() || !documentSnapshot.getBoolean("Owner") == true){
+                                            groups.remove(group);
+                                        }
+                                        binding.textErrorMessage.setVisibility(View.GONE);
+                                        groupAdapter.notifyDataSetChanged();
+                                        if (groups.size() <= 0) {
+                                            showErrorMessage();
+                                        }
+                                    });
+                        }
+
                     } else {
                         showErrorMessage();
                     }
@@ -137,18 +142,25 @@ public class SearchActivity extends AppCompatActivity implements UserListener, G
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 try {
-                    int number = Integer.parseInt(binding.edtSearch.getText().toString().trim());
+                    double number = Double.parseDouble(binding.edtSearch.getText().toString().trim());
+                    binding.userRecyclerView.setAdapter(groupAdapter);
                     searchUser(binding.edtSearch.getText().toString().trim());
                 } catch (NumberFormatException e) {
-                    searchGroup(binding.edtSearch.getText().toString().trim());
+                    binding.userRecyclerView.setAdapter(usersAdapter);
+                    if (binding.edtSearch.getText().length() > 0){
+                        groups.clear();
+                        Log.d("SearchTAG", "group");
+                        searchGroup(binding.edtSearch.getText().toString().trim());
+                    } else {
+                        Log.d("SearchTAG", "null");
+                        groups.clear();
+                        groupAdapter.notifyDataSetChanged();
+                    }
                 }
-
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
     }
@@ -174,6 +186,22 @@ public class SearchActivity extends AppCompatActivity implements UserListener, G
 
     @Override
     public void onGroupClicker(Group group) {
-
+        Group groupIntent = new Group();
+        groupIntent.id = group.id;
+        groupIntent.image = group.image;
+        groupIntent.name = group.name;
+        //group = (Group) getIntent().getSerializableExtra(Constants.KEY_GROUP);
+        database.collection(Constants.KEY_COLLECTION_GROUP).document(group.id)
+                .collection(Constants.KEY_GROUP_MEMBER).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    ArrayList<String> members = new ArrayList<>();
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                        String member = queryDocumentSnapshot.getId();
+                        members.add(member);
+                    }
+                    groupIntent.member = members;
+                    ChatGroupBottomSheetFragment bottomSheetDialog = ChatGroupBottomSheetFragment.newInstance(groupIntent);
+                    bottomSheetDialog.show(getSupportFragmentManager(), bottomSheetDialog.getTag());
+                });
     }
 }

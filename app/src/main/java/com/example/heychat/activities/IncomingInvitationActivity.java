@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -31,6 +32,8 @@ import com.example.heychat.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
@@ -86,7 +89,7 @@ public class IncomingInvitationActivity extends BaseSinchActivity {
                 imageMeetingType.setImageDrawable(getDrawable(R.drawable.ic_call));
             }
         }
-
+        checkPermision();
         if (getSinchServiceInterface() != null && !getSinchServiceInterface().isStarted()) {
             getSinchServiceInterface().startClient(userName);
         }
@@ -128,6 +131,26 @@ public class IncomingInvitationActivity extends BaseSinchActivity {
 
 
         callId = getIntent().getStringExtra(SinchService.CALL_ID);
+    }
+
+    private void checkPermision(){
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(IncomingInvitationActivity.this, getString(R.string.PermissionDenied) + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage(getString(R.string.PermissionDeniedNoice))
+                .setPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE)
+                .check();
     }
 
 

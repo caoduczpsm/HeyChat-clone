@@ -26,7 +26,7 @@
         android:background="@drawable/background_search_edt"
         android:drawableRight="@drawable/ic_search_white"
         android:hint="@string/Search_here"
-        android:inputType="number"
+        android:inputType="text"
         android:padding="@dimen/_5sdp"
         android:textColor="@color/black"
         android:textColorHint="@color/secondary_text"

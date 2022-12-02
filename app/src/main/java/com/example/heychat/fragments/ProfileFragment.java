@@ -550,6 +550,8 @@ public class ProfileFragment extends Fragment {
         DocumentReference documentReference = database.collection(Constants.KEY_COLLECTION_USER).document(
                 preferenceManager.getString(Constants.KEY_USER_ID)
         );
+
+        preferenceManager.clear();
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
         documentReference.update(updates)

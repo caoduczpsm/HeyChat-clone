@@ -113,7 +113,7 @@ public class SinchService extends Service {
         }
 
         public void stopClient() {
-            Toast.makeText(getApplicationContext(), "stopClient "+getUserName(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "stopClient "+getUserName(), Toast.LENGTH_SHORT).show();
             stop();
         }
 

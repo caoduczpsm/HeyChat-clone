@@ -125,4 +125,5 @@
     <string name="dialog_message">Bạn cần khởi động lại ứng dụng để lưu thay đổi</string>
     <string name="dialog_title">Khởi động lại!</string>
     <string name="Disbanding">Xóa nhóm</string>
+    <string name="Lead">Nhóm trưởng: </string>
 </resources>

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/drawable/splashmainscreen.xml" value="0.179" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_audio_call.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_chat.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_incoming_invitation.xml" value="0.25" />
@@ -13,11 +14,15 @@
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_sign_in.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_slash_main_screen.xml" value="0.1" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/activity_video_call.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/layout_detail_message_dialog.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/layout_dialog_add_group_member.xml" value="0.25" />
         <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/layout_dialog_edit_profile.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/layout_dialog_message_selection.xml" value="0.25" />
+        <entry key="..\:/NLNGanh/HeyChat-clone-final-done/app/src/main/res/layout/layout_dialog_private_account.xml" value="0.25" />
       </map>
     </option>
   </component>

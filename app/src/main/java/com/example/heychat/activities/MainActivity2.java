@@ -66,6 +66,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity2 extends BaseSinchActivity implements UserListener, SinchService.StartFailedListener {
 
@@ -93,6 +94,7 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         userOnlineAdapter = new UserOnlineAdapter(users, this);
         binding.recyclerviewUserOnline.setAdapter(userOnlineAdapter);
         getUsersOnline();
+        LanguageManager lang = new LanguageManager(this);
 
         if (preferenceManager.getString(Constants.KEY_TEXTSIZE) == null)
             preferenceManager.putString(Constants.KEY_TEXTSIZE, "18");
@@ -149,12 +151,13 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-
+                checkPermision();
             }
 
             @Override
             public void onPermissionDenied(List<String> deniedPermissions) {
                 Toast.makeText(getApplicationContext(),  context.getString(R.string.PermissionDenied) + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                checkPermision();
             }
         };
 
@@ -257,6 +260,26 @@ public class MainActivity2 extends BaseSinchActivity implements UserListener, Si
     @Override
     public void onStarted() {
 
+    }
+
+    private void checkPermision(){
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(MainActivity2.this, getString(R.string.PermissionDenied) + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage(getString(R.string.PermissionDeniedNoice))
+                .setPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE)
+                .check();
     }
 
     @Override

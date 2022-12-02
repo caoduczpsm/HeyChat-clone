@@ -94,7 +94,7 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
         layoutDisbandingGroup = findViewById(R.id.layoutDisbandingGroup);
         imageBack = findViewById(R.id.imageBack);
         textName = findViewById(R.id.textName);
-        imageProfile = findViewById(R.id.imageProfile);
+        imageProfile = findViewById(R.id.profile_image);
 
         textName.setTextSize(Integer.parseInt(preferenceManager.getString(Constants.KEY_TEXTSIZE)) + 2);
 
@@ -109,6 +109,11 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
                         layoutChangeTeamLeader.setVisibility(View.VISIBLE);
                         layoutDisbandingGroup.setVisibility(View.VISIBLE);
                         layoutDeleteMember.setVisibility(View.VISIBLE);
+                    }
+                    String image = documentSnapshot.getString(Constants.KEY_GROUP_IMAGE);
+                    Log.d("imagGroup", image);
+                    if (image != null) {
+                        imageProfile.setImageBitmap(getBitmap(image));
                     }
                 });
 
@@ -125,10 +130,6 @@ public class InfoGroupActivity extends AppCompatActivity implements UserListener
 
 
 //        Log.d("ImageGroup", group.image);
-//        if (getBitmap(group.image) != null) {
-//            imageProfile.setImageBitmap(getBitmap(group.image));
-//        }
-
         textName.setText(group.name);
 
     }

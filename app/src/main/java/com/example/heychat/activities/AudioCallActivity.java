@@ -93,7 +93,7 @@ public class AudioCallActivity extends BaseSinchActivity {
         mCallDuration = (TextView) findViewById(R.id.callDuration);
         mCallerName = (TextView) findViewById(R.id.user_name_call);
         mCallerImage = (CircleImageView) findViewById(R.id.image_user_call);
-        ImageView endCallButton = (ImageView) findViewById(R.id.hangupButton);
+        ImageView endCallButton = findViewById(R.id.hangupButton);
 
         mCallId = getIntent().getStringExtra(SinchService.CALL_ID);
 
@@ -205,7 +205,7 @@ public class AudioCallActivity extends BaseSinchActivity {
             AudioController audioController = getSinchServiceInterface().getAudioController();
             audioController.enableSpeaker();
             AudioManager audioManager = (AudioManager) getSystemService(getApplication().AUDIO_SERVICE);
-            audioManager.setMode(AudioManager.MODE_IN_CALL);
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
             mCallStart = System.currentTimeMillis();
             Log.d(TAG, "Call offered video: " + call.getDetails().isVideoOffered());
         }

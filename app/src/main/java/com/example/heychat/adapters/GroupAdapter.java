@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.heychat.R;
 import com.example.heychat.databinding.ItemContainerUserBinding;
 import com.example.heychat.listeners.GroupListener;
 import com.example.heychat.models.Group;
@@ -81,7 +82,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         DocumentSnapshot documentSnapshot1 = task.getResult();
-                                        binding.textEmail.setText("Leader: " + documentSnapshot1.getString(Constants.KEY_NAME));
+//                                        binding.textEmail.setText("Leader: " + documentSnapshot1.getString(Constants.KEY_NAME));
+                                        String text = itemView.getContext().getString(R.string.Lead) + " " + documentSnapshot1.getString(Constants.KEY_NAME);
+                                        binding.textEmail.setText(text);
                                     }
                                 });
 

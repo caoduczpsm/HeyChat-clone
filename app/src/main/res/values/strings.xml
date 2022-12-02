@@ -124,4 +124,5 @@
     <string name="dialog_message">You need restart to apply change</string>
     <string name="dialog_title">Restart!</string>
     <string name="Disbanding">Disbanding the group</string>
+    <string name="Lead">Leader: </string>
 </resources>

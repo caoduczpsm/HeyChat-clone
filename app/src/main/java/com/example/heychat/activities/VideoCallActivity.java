@@ -250,7 +250,6 @@ public class VideoCallActivity extends BaseSinchActivity {
             audioController.enableSpeaker();
             AudioManager audioManager = (AudioManager) getSystemService(getApplication().AUDIO_SERVICE);
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-            audioManager.setSpeakerphoneOn(true);
 
             mCallStart = System.currentTimeMillis();
             Log.d(TAG, "Call offered video: " + call.getDetails().isVideoOffered());

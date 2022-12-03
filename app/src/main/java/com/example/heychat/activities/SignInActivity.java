@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         LanguageManager lang = new LanguageManager(this);
         if (preferenceManager.getString(Constants.KEY_LANGUAGE) == null) {
-            preferenceManager.putString(Constants.KEY_LANGUAGE, "EN");
+            preferenceManager.putString(Constants.KEY_LANGUAGE, "VI");
         }
         if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
             if (Objects.equals(preferenceManager.getString(Constants.KEY_LANGUAGE), "VI")) {
